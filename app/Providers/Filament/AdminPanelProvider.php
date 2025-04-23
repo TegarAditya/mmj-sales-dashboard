@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use Awcodes\LightSwitch\Enums\Alignment;
 use Awcodes\LightSwitch\LightSwitchPlugin;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -66,6 +67,7 @@ class AdminPanelProvider extends PanelProvider
                 LightSwitchPlugin::make()
                     ->position(Alignment::TopCenter),
                 FilamentBackgroundsPlugin::make(),
+                FilamentShieldPlugin::make()
             ]);
     }
 }
