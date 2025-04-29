@@ -9,6 +9,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -32,10 +33,11 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->passwordReset()
+            ->databaseNotifications()
             ->colors([
                 'primary' => Color::Blue,
             ])
-            ->passwordReset()
             ->brandLogo(asset('/images/logo.webp'))
             ->brandLogoHeight('40px')
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
@@ -47,6 +49,23 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+            ])
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label('Master Data')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Master Produk')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Master Customer')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Master Supplier')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label(__('filament-shield::filament-shield.nav.group'))
+                    ->collapsed(),
             ])
             ->middleware([
                 EncryptCookies::class,
