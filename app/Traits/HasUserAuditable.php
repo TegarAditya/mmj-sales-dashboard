@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 trait HasUserAuditable
@@ -27,6 +28,21 @@ trait HasUserAuditable
                 $model->save();
             }
         });
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function deletedBy()
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
     }
 
     protected function usesSoftDeletes(): bool
