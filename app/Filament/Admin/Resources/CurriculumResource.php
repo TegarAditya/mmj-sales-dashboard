@@ -17,12 +17,14 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class CurriculumResource extends Resource
 {
     protected static ?string $model = Curriculum::class;
+    
+    protected static ?string $modelLabel = 'Kurikulum';
 
     protected static ?string $navigationGroup = 'Master Data';
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
 
-    protected static ?string $modelLabel = 'Kurikulum';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
