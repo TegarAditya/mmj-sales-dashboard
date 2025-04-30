@@ -35,10 +35,12 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->passwordReset()
             ->databaseNotifications()
+            ->databaseTransactions()
+            ->unsavedChangesAlerts()
             ->colors([
                 'primary' => Color::Blue,
             ])
-            ->brandLogo(asset('/images/logo.webp'))
+            ->brandLogo(asset('/images/logo-lg.webp'))
             ->brandLogoHeight('40px')
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
@@ -58,10 +60,10 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Master Produk')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Master Customer')
+                    ->label('Master Supplier')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Master Supplier')
+                    ->label('Master Customer')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label(__('filament-shield::filament-shield.nav.group'))
