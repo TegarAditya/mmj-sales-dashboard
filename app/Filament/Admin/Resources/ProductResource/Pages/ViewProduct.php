@@ -9,10 +9,26 @@ use Filament\Infolists\Components\TextEntry\TextEntrySize;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\FontWeight;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\HtmlString;
 
 class ViewProduct extends ViewRecord
 {
     protected static string $resource = ProductResource::class;
+
+    public function getTitle(): string | Htmlable
+    {
+        return new HtmlString(
+            "<span class=\"text-2xl\">{$this->record->name}</span>"
+        );
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\EditAction::make(),
+        ];
+    }
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -22,38 +38,48 @@ class ViewProduct extends ViewRecord
                 Infolists\Components\Split::make([
                     Infolists\Components\Section::make([
                         Infolists\Components\TextEntry::make('code')
-                            ->label('Nama Produk')
+                            ->label('Kode Produk')
                             ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold),
                         Infolists\Components\TextEntry::make('semester.name')
                             ->label('Semester')
+                            ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold),
                         Infolists\Components\TextEntry::make('type.name')
                             ->label('Tipe Buku')
+                            ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold),
                         Infolists\Components\TextEntry::make('supplier.name')
                             ->label('Penerbit')
+                            ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold),
                         Infolists\Components\TextEntry::make('curriculum.name')
                             ->label('Kurikulum')
+                            ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold),
                         Infolists\Components\TextEntry::make('educationalLevel.name')
                             ->label('Jenjang Pendidikan')
+                            ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold),
                         Infolists\Components\TextEntry::make('educationalClass.name')
                             ->label('Kelas')
+                            ->size(TextEntrySize::Medium)
+                            ->formatStateUsing(fn($state) => str_contains(strtolower($state), 'kelas') ? strtoupper($state) : 'KELAS-' . $state)
                             ->weight(FontWeight::Bold),
                         Infolists\Components\TextEntry::make('educationalSubject.name')
                             ->label('Mata Pelajaran')
+                            ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold),
                         Infolists\Components\TextEntry::make('cost')
                             ->label('Harga Pokok')
+                            ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold)
-                            ->formatStateUsing(fn ($state) => format_currency($state)),
+                            ->formatStateUsing(fn($state) => format_currency($state)),
                         Infolists\Components\TextEntry::make('price')
                             ->label('Harga Jual')
+                            ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold)
-                            ->formatStateUsing(fn ($state) => format_currency($state)),
+                            ->formatStateUsing(fn($state) => format_currency($state)),
                     ])
                         ->grow(true)
                         ->columns(2),
