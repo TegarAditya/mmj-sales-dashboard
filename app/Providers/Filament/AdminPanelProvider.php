@@ -42,6 +42,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->brandLogo(asset('/images/logo-lg.webp'))
             ->brandLogoHeight('40px')
+            ->sidebarCollapsibleOnDesktop()
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->pages([
@@ -54,16 +55,22 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label('Master Data')
+                    ->label('Master Buku')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Master Produk')
+                    ->label('Produk')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Master Supplier')
+                    ->label('Supplier')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Master Customer')
+                    ->label('Customer')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Estimasi')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Pengiriman')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label(__('filament-shield::filament-shield.nav.group'))
