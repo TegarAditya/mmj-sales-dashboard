@@ -20,7 +20,7 @@ class CurriculumResource extends Resource
     
     protected static ?string $modelLabel = 'Kurikulum';
 
-    protected static ?string $navigationGroup = 'Master Data';
+    protected static ?string $navigationGroup = 'Master Buku';
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
 
