@@ -20,7 +20,7 @@ class ProductResource extends Resource
 
     protected static ?string $modelLabel = 'Daftar Produk';
 
-    protected static ?string $navigationGroup = 'Master Produk';
+    protected static ?string $navigationGroup = 'Produk';
 
     protected static ?string $navigationIcon = 'heroicon-o-cube-transparent';
 
@@ -68,6 +68,10 @@ class ProductResource extends Resource
                             ->required()
                             ->relationship('educationalSubject', 'name')
                             ->preload(),
+                        Forms\Components\Select::make('page_count')
+                            ->label('Jumlah Halaman')
+                            ->required()
+                            ->options(Product::PAGE_COUNT_OPTIONS),
                     ]),
                 Forms\Components\Fieldset::make('Data Harga')
                     ->schema([
@@ -175,10 +179,6 @@ class ProductResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])
-            ->headerActions([
-                Tables\Actions\ImportAction::make()
-                    ->importer(ProductImporter::class),
             ]);
     }
 
