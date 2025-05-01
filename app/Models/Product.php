@@ -34,6 +34,14 @@ class Product extends Model
         'stock' => 'integer',
     ];
 
+    public const PAGE_COUNT_OPTIONS = [
+        64 => '64 halaman',
+        80 => '80 halaman',
+        96 => '96 halaman',
+        128 => '128 halaman',
+        144 => '144 halaman',
+    ];
+
     public function type(): BelongsTo
     {
         return $this->belongsTo(Type::class);
