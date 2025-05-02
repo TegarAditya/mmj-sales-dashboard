@@ -12,6 +12,7 @@ class Product extends Model
     use SoftDeletes, HasUserAuditable;
 
     protected $fillable = [
+        'publisher_id',
         'type_id',
         'supplier_id',
         'semester_id',
@@ -41,6 +42,11 @@ class Product extends Model
         128 => '128 halaman',
         144 => '144 halaman',
     ];
+
+    public function publisher(): BelongsTo
+    {
+        return $this->belongsTo(Publisher::class);
+    }
 
     public function type(): BelongsTo
     {
@@ -85,9 +91,9 @@ class Product extends Model
         $level = $this->educationalLevel->code;
         $class = $this->educationalClass->code;
         $subject = $this->educationalSubject->code;
-        $supplier = $this->supplier->code;
+        $publisher = $this->publisher->code;
 
-        return "{$type}-{$level}{$curriculum}{$subject}{$class}{$semester}/{$supplier}";
+        return "{$type}-{$level}{$curriculum}{$subject}{$class}{$semester}/{$publisher}";
     }
 
     public function getName(): string
@@ -98,9 +104,9 @@ class Product extends Model
         $subject = $this->educationalSubject->name;
         $class = $this->educationalClass->name;
         $semester = $this->semester->name;
-        $supplier = $this->supplier->name;
+        $publisher = $this->publisher->name;
 
-        return "{$type} - {$level} - {$curriculum} - {$subject} - {$class} - {$semester} - ({$supplier})";
+        return "{$type} - {$level} - {$curriculum} - {$subject} - {$class} - {$semester} - ({$publisher})";
     }
 
     protected static function booted(): void

@@ -44,9 +44,14 @@ class ProductResource extends Resource
                             ->relationship('type', 'name')
                             ->preload(),
                         Forms\Components\Select::make('supplier_id')
-                            ->label('Penerbit')
+                            ->label('Supplier')
                             ->required()
                             ->relationship('supplier', 'name')
+                            ->preload(),
+                        Forms\Components\Select::make('publisher_id')
+                            ->label('Penerbit')
+                            ->required()
+                            ->relationship('publisher', 'name')
                             ->preload(),
                         Forms\Components\Select::make('curriculum_id')
                             ->label('Kurikulum')
