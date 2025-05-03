@@ -20,4 +20,16 @@ class Customer extends Model
         'contact_person_name',
         'contact_person_phone'
     ];
+
+    public function estimations()
+    {
+        return $this->hasMany(Estimation::class);
+    }
+
+    public function estimationItems()
+    {
+        return $this->hasManyThrough(EstimationItem::class, Estimation::class)
+                ->select('estimation_items.*')
+                ->distinct('product_id');
+    }
 }
