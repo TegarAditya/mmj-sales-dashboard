@@ -4,6 +4,7 @@ use App\Models\Curriculum;
 use App\Models\EducationalClass;
 use App\Models\EducationalLevel;
 use App\Models\EducationalSubject;
+use App\Models\Publisher;
 use App\Models\Semester;
 use App\Models\Supplier;
 use App\Models\Type;
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Type::class)->constrained();
             $table->foreignIdFor(Supplier::class)->constrained();
+            $table->foreignIdFor(Publisher::class)->constrained();
             $table->foreignIdFor(Semester::class)->constrained();
             $table->foreignIdFor(Curriculum::class)->constrained();
             $table->foreignIdFor(EducationalLevel::class)->constrained();
