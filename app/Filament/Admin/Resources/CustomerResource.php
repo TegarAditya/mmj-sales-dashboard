@@ -69,28 +69,41 @@ class CustomerResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('code')
+                    ->label('Kode')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nama')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label('Telepon')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('website')
+                    ->label('Website')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('contact_person_name')
+                    ->label('Nama CP')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('contact_person_phone')
+                    ->label('Telepon CP')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_by')
+                Tables\Columns\TextColumn::make('createdBy.name')
+                    ->label('Dibuat Oleh')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('updated_by')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updatedBy.name')
+                    ->label('Diedit Oleh')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('deleted_by')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('deletedBy.name')
+                    ->label('Dihapus Oleh')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
