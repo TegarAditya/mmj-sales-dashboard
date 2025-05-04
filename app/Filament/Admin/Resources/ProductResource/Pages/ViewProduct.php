@@ -19,7 +19,7 @@ class ViewProduct extends ViewRecord
     public function getTitle(): string | Htmlable
     {
         return new HtmlString(
-            "<span class=\"text-2xl\">{$this->record->name}</span>"
+            "<span class=\"text-2xl\">{$this->record->code}</span>"
         );
     }
 
