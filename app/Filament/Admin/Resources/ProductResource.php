@@ -137,6 +137,10 @@ class ProductResource extends Resource
                     ->label('Mapel')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('stock')
+                    ->label('Stok')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('cost')
                     ->label('Harga Pokok')
                     ->sortable()
