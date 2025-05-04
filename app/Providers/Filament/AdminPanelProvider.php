@@ -23,6 +23,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
+use TomatoPHP\FilamentUsers\FilamentUsersPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -31,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('admin')
+            ->path('')
             ->login()
             ->passwordReset()
             ->databaseNotifications()
@@ -55,16 +56,19 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
+                    ->label('Supplier')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Customer')
+                    ->collapsed(),
+                NavigationGroup::make()
                     ->label('Master Buku')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('Produk')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Supplier')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('Customer')
+                    ->label('Stok')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('Estimasi')
@@ -95,7 +99,8 @@ class AdminPanelProvider extends PanelProvider
                 LightSwitchPlugin::make()
                     ->position(Alignment::TopCenter),
                 FilamentBackgroundsPlugin::make(),
-                FilamentShieldPlugin::make()
+                FilamentShieldPlugin::make(),
+                FilamentUsersPlugin::make()
             ]);
     }
 }
