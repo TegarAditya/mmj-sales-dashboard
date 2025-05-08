@@ -83,6 +83,28 @@ class Product extends Model
         return $this->belongsTo(EducationalSubject::class);
     }
 
+    public function stockInboundItems()
+    {
+        return $this->hasMany(StockInboundItem::class);
+    }
+
+    public function estimationItems()
+    {
+        return $this->hasMany(EstimationItem::class);
+    }
+
+    public function deliveryItems()
+    {
+        return $this->hasMany(DeliveryItem::class);
+    }
+
+    public function getStock(): int
+    {
+        $addition = (int) $this->stockInboundItems()->sum('quantity');
+        $subtraction = (int) $this->deliveryItems()->sum('quantity');
+        return $addition - $subtraction;
+    }
+
     public function getCode(): string
     {
         $type = $this->type->code;
