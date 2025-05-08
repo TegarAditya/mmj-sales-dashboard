@@ -39,16 +39,29 @@ class ProductImporter extends Importer
                 ->requiredMapping()
                 ->relationship(resolveUsing: 'code')
                 ->rules(['required']),
+            ImportColumn::make('publisher')
+                ->label('Kode Penerbit')
+                ->requiredMapping()
+                ->relationship(resolveUsing: 'code')
+                ->rules(['required']),
             ImportColumn::make('type')
                 ->label('Kode Tipe')
                 ->requiredMapping()
                 ->relationship(resolveUsing: 'code')
                 ->rules(['required']),
             ImportColumn::make('supplier')
-                ->label('Penerbit')
+                ->label('Kode Supplier')
                 ->requiredMapping()
                 ->relationship(resolveUsing: 'code')
                 ->rules(['required']),
+            ImportColumn::make('cost')
+                ->label('Harga Pokok')
+                ->requiredMapping()
+                ->rules(['required', 'string', 'max:255']),
+            ImportColumn::make('price')
+                ->label('Harga Jual')
+                ->requiredMapping()
+                ->rules(['required', 'string', 'max:255']),
         ];
     }
 
