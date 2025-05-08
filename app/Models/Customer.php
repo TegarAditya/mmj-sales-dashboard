@@ -32,4 +32,16 @@ class Customer extends Model
                 ->select('estimation_items.*')
                 ->distinct('product_id');
     }
+
+    public function deliveries()
+    {
+        return $this->hasMany(Delivery::class);
+    }
+
+    public function deliveryItems()
+    {
+        return $this->hasManyThrough(DeliveryItem::class, Delivery::class)
+                ->select('delivery_items.*')
+                ->distinct('product_id');
+    }
 }
