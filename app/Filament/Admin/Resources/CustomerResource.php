@@ -17,11 +17,13 @@ class CustomerResource extends Resource
 {
     protected static ?string $model = Customer::class;
 
-    protected static ?string $modelLabel = 'Daftar Customer';
+    protected static ?string $modelLabel = 'Customer';
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?string $navigationGroup = 'Customer';
+
+    protected static ?string $navigationLabel = 'Daftar Customer';
 
     public static function form(Form $form): Form
     {
@@ -135,6 +137,7 @@ class CustomerResource extends Resource
     {
         return [
             'index' => Pages\ManageCustomers::route('/'),
+            'estimation' => Pages\ViewCustomerEstimations::route('/{record}/estimations'),
         ];
     }
 }
