@@ -38,6 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->databaseTransactions()
             ->unsavedChangesAlerts()
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
                 'primary' => Color::Blue,
             ])
