@@ -51,13 +51,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
 
     @if (!request('preview'))
-    <!-- <script>
+    <script>
         (function($) {
             $(window).on('load', function() {
                 window.print();
             });
         })(jQuery);
-    </script> -->
+    </script>
     @endif
 
     @stack('scripts')
