@@ -14,7 +14,6 @@ class Product extends Model
     protected $fillable = [
         'publisher_id',
         'type_id',
-        'supplier_id',
         'semester_id',
         'curriculum_id',
         'educational_level_id',
@@ -51,11 +50,6 @@ class Product extends Model
     public function type(): BelongsTo
     {
         return $this->belongsTo(Type::class);
-    }
-
-    public function supplier(): BelongsTo
-    {
-        return $this->belongsTo(Supplier::class);
     }
 
     public function semester(): BelongsTo
