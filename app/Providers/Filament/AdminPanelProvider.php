@@ -57,29 +57,21 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label('Supplier')
-                    ->collapsed(),
+                    ->label('Supplier'),
                 NavigationGroup::make()
-                    ->label('Customer')
-                    ->collapsed(),
+                    ->label('Customer'),
                 NavigationGroup::make()
-                    ->label('Master Buku')
-                    ->collapsed(),
+                    ->label('Master Buku'),
                 NavigationGroup::make()
-                    ->label('Produk')
-                    ->collapsed(),
+                    ->label('Produk'),
                 NavigationGroup::make()
-                    ->label('Stok')
-                    ->collapsed(),
+                    ->label('Stok'),
                 NavigationGroup::make()
-                    ->label('Estimasi')
-                    ->collapsed(),
+                    ->label('Estimasi'),
                 NavigationGroup::make()
-                    ->label('Pengiriman')
-                    ->collapsed(),
+                    ->label('Pengiriman'),
                 NavigationGroup::make()
-                    ->label(__('filament-shield::filament-shield.nav.group'))
-                    ->collapsed(),
+                    ->label(__('filament-shield::filament-shield.nav.group')),
             ])
             ->middleware([
                 EncryptCookies::class,
