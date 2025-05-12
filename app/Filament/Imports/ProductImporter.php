@@ -49,11 +49,6 @@ class ProductImporter extends Importer
                 ->requiredMapping()
                 ->relationship(resolveUsing: 'code')
                 ->rules(['required']),
-            ImportColumn::make('supplier')
-                ->label('Kode Supplier')
-                ->requiredMapping()
-                ->relationship(resolveUsing: 'code')
-                ->rules(['required']),
             ImportColumn::make('cost')
                 ->label('Harga Pokok')
                 ->requiredMapping()

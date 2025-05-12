@@ -43,11 +43,6 @@ class ProductResource extends Resource
                             ->required()
                             ->relationship('type', 'name')
                             ->preload(),
-                        Forms\Components\Select::make('supplier_id')
-                            ->label('Supplier')
-                            ->required()
-                            ->relationship('supplier', 'name')
-                            ->preload(),
                         Forms\Components\Select::make('publisher_id')
                             ->label('Penerbit')
                             ->required()
@@ -114,10 +109,6 @@ class ProductResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type.name')
                     ->label('Tipe')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('supplier.code')
-                    ->label('Supplier')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('curriculum.name')

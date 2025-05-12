@@ -30,10 +30,13 @@ class ProductExporter extends Exporter
                 ->label('Kode Kelas'),
             ExportColumn::make('EducationalSubjects.code')
                 ->label('Kode Mapel'),
-            ExportColumn::make('type.name')
-                ->label('Nama Tipe'),
             ExportColumn::make('type.code')
                 ->label('Kode Tipe'),
+            ExportColumn::make('cost')
+                ->label('Harga Pokok'),
+            ExportColumn::make('price')
+                ->label('Harga Jual'),
+            ExportColumn::make('publisher.code'),
             ExportColumn::make('created_at'),
             ExportColumn::make('updated_at'),
             ExportColumn::make('deleted_at'),
