@@ -18,8 +18,6 @@ class ProductExporter extends Exporter
                 ->label('ID'),
             ExportColumn::make('name')
                 ->label('Nama'),
-            ExportColumn::make('description')
-                ->label('Deskripsi'),
             ExportColumn::make('curriculum.code')
                 ->label('Kode Kurikulum'),
             ExportColumn::make('semester.code')
@@ -32,11 +30,14 @@ class ProductExporter extends Exporter
                 ->label('Kode Mapel'),
             ExportColumn::make('type.code')
                 ->label('Kode Tipe'),
+            ExportColumn::make('publisher.code')
+                ->label('Kode Penerbit'),
             ExportColumn::make('cost')
                 ->label('Harga Pokok'),
             ExportColumn::make('price')
                 ->label('Harga Jual'),
-            ExportColumn::make('publisher.code'),
+            ExportColumn::make('page_count')
+                ->label('Jumlah Halaman'),
             ExportColumn::make('created_at'),
             ExportColumn::make('updated_at'),
             ExportColumn::make('deleted_at'),
@@ -45,10 +46,10 @@ class ProductExporter extends Exporter
 
     public static function getCompletedNotificationBody(Export $export): string
     {
-        $body = 'Your product export has completed and '.number_format($export->successful_rows).' '.str('row')->plural($export->successful_rows).' exported.';
+        $body = 'Your product export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
 
         if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= ' '.number_format($failedRowsCount).' '.str('row')->plural($failedRowsCount).' failed to export.';
+            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
         }
 
         return $body;

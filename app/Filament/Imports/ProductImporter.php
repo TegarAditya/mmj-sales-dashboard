@@ -49,6 +49,10 @@ class ProductImporter extends Importer
                 ->requiredMapping()
                 ->relationship(resolveUsing: 'code')
                 ->rules(['required']),
+            ImportColumn::make('page_count')
+                ->label('Jumlah Halaman')
+                ->requiredMapping()
+                ->rules(['integer']),
             ImportColumn::make('cost')
                 ->label('Harga Pokok')
                 ->requiredMapping()
