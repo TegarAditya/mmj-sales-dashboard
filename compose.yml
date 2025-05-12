@@ -1,0 +1,10 @@
+services:
+  frankenphp:
+    build:
+      context: .
+    ports:
+      - "${APP_PORT}:8000"
+    volumes:
+      - ./.env:/app/.env
+    entrypoint: php artisan octane:frankenphp --workers=2 --max-requests=4
+    restart: unless-stopped
