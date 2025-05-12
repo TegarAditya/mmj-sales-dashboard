@@ -79,21 +79,14 @@ class TypeResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            // RelationManagers\ProductsRelationManager::class,
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
-            // 'index' => Pages\ManageTypes::route('/'),
-            'index' => Pages\ListTypes::route('/'),
-            'create' => Pages\CreateType::route('/create'),
-            'view' => Pages\ViewType::route('/{record}'),
-            'edit' => Pages\EditType::route('/{record}/edit'),
+            'index' => Pages\ManageTypes::route('/'),
+            // 'index' => Pages\ListTypes::route('/'),
+            // 'create' => Pages\CreateType::route('/create'),
+            // 'view' => Pages\ViewType::route('/{record}'),
+            // 'edit' => Pages\EditType::route('/{record}/edit'),
         ];
     }
 
