@@ -1,5 +1,9 @@
 @extends('layouts.print')
 
+@section('title')
+Surat Jalan - {{ $delivery->document_number }}
+@endsection
+
 @section('header.center')
 <h6>SURAT JALAN</h6>
 @endsection
