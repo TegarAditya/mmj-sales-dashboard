@@ -51,4 +51,31 @@ class Invoice extends Model
     {
         return $this->getTotalPrice() - $this->getTotalDiscount();
     }
+
+    public function generateDocumentNumber()
+    {
+        $lastDelivery = self::orderBy('id', 'desc')->withTrashed()->first();
+        $lastNumber = $lastDelivery ? (int) substr($lastDelivery->document_number, -4) : 0;
+        $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        return 'INV-' . date('Ymd') . '-' . $newNumber;
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            $model->document_number = $model->generateDocumentNumber();
+        });
+
+        static::deleting(function ($model) {
+            foreach ($model->items as $item) {
+                $item->delete();
+            }
+        });
+
+        static::restoring(function ($model) {
+            foreach ($model->items()->withTrashed()->get() as $item) {
+                $item->restore();
+            }
+        });
+    }
 }

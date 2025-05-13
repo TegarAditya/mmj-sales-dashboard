@@ -13,6 +13,7 @@ class InvoiceItem extends Model
         'price',
         'discount',
         'total_price',
+        'total_discount',
     ];
 
     protected $casts = [
@@ -20,6 +21,7 @@ class InvoiceItem extends Model
         'price' => 'integer',
         'discount' => 'integer',
         'total_price' => 'integer',
+        'total_discount' => 'integer',
     ];
 
     public function invoice()
@@ -34,17 +36,24 @@ class InvoiceItem extends Model
 
     public function getTotalPrice()
     {
-        return $this->quantity * ($this->price - $this->discount);
+        return $this->quantity * $this->price;
+    }
+
+    public function getTotalDiscount()
+    {
+        return $this->quantity * $this->discount;
     }
 
     protected static function booted(): void
     {
         static::creating(function ($model) {
             $model->total_price = $model->getTotalPrice();
+            $model->total_discount = $model->getTotalDiscount();
         });
 
         static::updating(function ($model) {
             $model->total_price = $model->getTotalPrice();
+            $model->total_discount = $model->getTotalDiscount();
         });
     }
 }
