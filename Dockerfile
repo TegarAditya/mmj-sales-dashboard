@@ -1,10 +1,5 @@
-# Use Node.js base to extract Node and npm
-FROM node:22-alpine AS nodejs
-
-# Base image with FrankenPHP
 FROM dunglas/frankenphp:php8.3-alpine AS base
 
-# Install required PHP extensions
 RUN install-php-extensions \
     ctype \
     curl \
@@ -28,10 +23,7 @@ RUN install-php-extensions \
     zip \
     @composer 
 
-# Copy Node.js and npm binaries from node image
-COPY --from=nodejs /usr/local/bin/node /usr/local/bin/
-COPY --from=nodejs /usr/local/bin/npm /usr/local/bin/
-COPY --from=nodejs /usr/local/lib/node_modules /usr/local/lib/node_modules/
+RUN apk add --no-cache nodejs npm
 
 # Set working directory
 WORKDIR /app
@@ -46,15 +38,13 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm ci
 RUN npm run build
 
-# Run Laravel setup
+# Laravel setup
 RUN php artisan storage:link
-
-# Run Laravel optimizer
 RUN php artisan optimize
 RUN php artisan filament:optimize
 
 # Expose port
 EXPOSE 8000
 
-# Default command
+# Start command
 ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
