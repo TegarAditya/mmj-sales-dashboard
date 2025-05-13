@@ -1,5 +1,6 @@
 FROM dunglas/frankenphp:php8.3-alpine AS base
 
+# Install PHP extensions and tools
 RUN install-php-extensions \
     ctype \
     curl \
@@ -21,9 +22,11 @@ RUN install-php-extensions \
     tokenizer \
     xml \
     zip \
-    @composer 
+    @composer \
+    && apk add --no-cache nodejs npm
 
-RUN apk add --no-cache nodejs npm supervisor
+# Install process manager
+RUN npm install -g pm2
 
 # Set working directory
 WORKDIR /app
@@ -31,21 +34,20 @@ WORKDIR /app
 # Copy application code
 COPY . /app
 
-# Install PHP dependencies
+# Install PHP dependencies 
 RUN composer install --no-dev --optimize-autoloader
 
-# Install Node.js dependencies and build frontend assets
+# Build frontend assets
 RUN npm ci
 RUN npm run build
 
 # Laravel setup
-RUN php artisan key:generate
 RUN php artisan storage:link
 RUN php artisan optimize
 RUN php artisan filament:optimize
 
-# Expose port
+# Expose FrankenPHP port
 EXPOSE 8000
 
-# Start command
-CMD ["supervisord", "-c", "/app/supervisord.conf"]
+# Start Laravel Octane using FrankenPHP
+ENTRYPOINT ["sh", "-c", "pm2 start queue-worker.yml && php artisan octane:frankenphp"]
