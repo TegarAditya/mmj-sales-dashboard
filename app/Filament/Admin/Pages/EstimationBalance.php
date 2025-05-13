@@ -35,7 +35,11 @@ class EstimationBalance extends Page
                     ->label('Semester')
                     ->inlineLabel()
                     ->options(Semester::all()->pluck('name', 'id'))
-                    ->default(Semester::query()->latest('start_date')->first()->id)
+                    ->default(function () {
+                        $semester = Semester::query()->latest('start_date')->first();
+
+                        return $semester ? $semester->id : null;
+                    })
                     ->reactive()
                     ->selectablePlaceholder(false)
                     ->native(false)
