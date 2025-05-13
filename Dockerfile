@@ -23,7 +23,7 @@ RUN install-php-extensions \
     zip \
     @composer 
 
-RUN apk add --no-cache nodejs npm
+RUN apk add --no-cache nodejs npm supervisor
 
 # Set working directory
 WORKDIR /app
@@ -48,4 +48,4 @@ RUN php artisan filament:optimize
 EXPOSE 8000
 
 # Start command
-ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
+CMD ["supervisord", "-c", "/app/supervisord.conf"]
