@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasUserAuditable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InvoiceItem extends Model
 {
+    use SoftDeletes, HasUserAuditable;
+    
     protected $fillable = [
         'invoice_id',
         'product_id',
