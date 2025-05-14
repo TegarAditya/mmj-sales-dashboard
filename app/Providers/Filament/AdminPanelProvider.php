@@ -71,6 +71,8 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Pengiriman'),
                 NavigationGroup::make()
+                    ->label('Billing'),
+                NavigationGroup::make()
                     ->label(__('filament-shield::filament-shield.nav.group')),
             ])
             ->middleware([
