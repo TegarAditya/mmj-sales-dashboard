@@ -18,6 +18,10 @@ class ViewDelivery extends ViewRecord
                 ->icon('heroicon-o-printer')
                 ->url(route('print.delivery', $this->record->id))
                 ->openUrlInNewTab(),
+            Actions\Action::make('invoice')
+                ->label('Buat Invoice')
+                ->icon('heroicon-o-document-text')
+                ->url(route('filament.admin.resources.invoices.create', ['delivery_id' => $this->record->id])),
             Actions\EditAction::make(),
         ];
     }
