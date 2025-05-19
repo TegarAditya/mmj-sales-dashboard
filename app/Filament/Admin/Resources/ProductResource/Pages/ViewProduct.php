@@ -49,8 +49,9 @@ class ViewProduct extends ViewRecord
                             ->label('Tipe Buku')
                             ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold),
-                        Infolists\Components\TextEntry::make('supplier.name')
+                        Infolists\Components\TextEntry::make('publisher.name')
                             ->label('Penerbit')
+                            ->formatStateUsing(fn($state, $record) => $state . " ({$record->publisher->code})")
                             ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold),
                         Infolists\Components\TextEntry::make('curriculum.name')
