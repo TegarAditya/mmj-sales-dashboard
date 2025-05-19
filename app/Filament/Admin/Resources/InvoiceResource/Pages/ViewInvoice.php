@@ -13,6 +13,11 @@ class ViewInvoice extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('print')
+                ->label('Print Invoice')
+                ->icon('heroicon-o-printer')
+                ->url(route('print.invoice', $this->record->id))
+                ->openUrlInNewTab(),
             Actions\EditAction::make(),
         ];
     }
