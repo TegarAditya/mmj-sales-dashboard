@@ -107,13 +107,13 @@ class DeliveryResource extends Resource
                 Tables\Columns\TextColumn::make('has_invoice')
                     ->label('Status Invoice')
                     ->formatStateUsing(function ($state) {
-                        if ($state === false) return 'Sudah Dibuat';
+                        if ($state === true) return 'Sudah Dibuat';
 
                         return 'Belum dibuat';
                     })
                     ->badge()
                     ->color(function ($state) {
-                        if ($state === false) return Color::Blue;
+                        if ($state === true) return Color::Blue;
 
                         return Color::Yellow;
                     }),
