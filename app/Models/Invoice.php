@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Invoice extends Model
 {
     use SoftDeletes, HasUserAuditable;
-    
+
     protected $fillable = [
         'customer_id',
         'semester_id',
@@ -19,6 +19,10 @@ class Invoice extends Model
         'total_price',
         'total_discount',
         'total_due',
+    ];
+
+    protected $casts = [
+        'date' => 'datetime',
     ];
 
     public function customer()
