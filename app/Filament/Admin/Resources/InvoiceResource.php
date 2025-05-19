@@ -6,11 +6,13 @@ use App\Filament\Admin\Resources\InvoiceResource\Pages;
 use App\Filament\Admin\Resources\InvoiceResource\RelationManagers;
 use App\Models\Invoice;
 use Filament\Forms;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class InvoiceResource extends Resource
@@ -82,28 +84,42 @@ class InvoiceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('customer_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('delivery_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('semester_id')
+                Tables\Columns\TextColumn::make('customer.name')
+                    ->label('Customer')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('document_number')
+                    ->label('Nomor Invoice')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('delivery.document_number')
+                    ->label('Surat Jalan')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('semester.name')
+                    ->label('Semester')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('date')
-                    ->date()
+                    ->label('Tanggal')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_price')
-                    ->numeric()
+                    ->label('Total Harga')
+                    ->money('IDR')
+                    ->getStateUsing(function (Model $record) {
+                        return static::getTotal($record)['total_price'];
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_discount')
-                    ->numeric()
+                    ->label('Total Diskon')
+                    ->money('IDR')
+                    ->getStateUsing(function (Model $record) {
+                        return static::getTotal($record)['total_discount'];
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_due')
-                    ->numeric()
+                    ->label('Total Tagihan')
+                    ->money('IDR')
+                    ->getStateUsing(function (Model $record) {
+                        return static::getTotal($record)['total_due'];
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -117,26 +133,23 @@ class InvoiceResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_by')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('updated_by')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('deleted_by')
-                    ->numeric()
-                    ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\SelectFilter::make('customer_id')
+                    ->relationship('customer', 'name')
+                    ->multiple()
+                    ->placeholder('Pilih Customer'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -155,6 +168,15 @@ class InvoiceResource extends Resource
             'create' => Pages\CreateInvoice::route('/create'),
             'view' => Pages\ViewInvoice::route('/{record}'),
             'edit' => Pages\EditInvoice::route('/{record}/edit'),
+        ];
+    }
+
+    protected static function getTotal(Model $record): array
+    {
+        return [
+            'total_price' => $record->items->sum('total_price'),
+            'total_discount' => $record->items->sum('total_discount'),
+            'total_due' => $record->items->sum('total_price') - $record->items->sum('total_discount'),
         ];
     }
 }
