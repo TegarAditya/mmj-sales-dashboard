@@ -20,6 +20,7 @@ class Delivery extends Model
 
     protected $casts = [
         'date' => 'datetime',
+        'has_invoice' => 'boolean',
     ];
 
     public function customer()
