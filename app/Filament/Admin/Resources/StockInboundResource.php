@@ -59,7 +59,6 @@ class StockInboundResource extends Resource
                                     ->required()
                                     ->options(function (callable $get) {
                                         return Product::query()
-                                            ->where('supplier_id', $get('../../supplier_id'))
                                             ->pluck('name', 'id');
                                     })
                                     ->searchable()
