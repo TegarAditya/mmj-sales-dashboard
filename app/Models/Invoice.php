@@ -78,11 +78,21 @@ class Invoice extends Model
             foreach ($model->items as $item) {
                 $item->delete();
             }
+
+            if ($model->delivery) {
+                $model->delivery->has_invoice = false;
+                $model->delivery->save();
+            }
         });
 
         static::restoring(function ($model) {
             foreach ($model->items()->withTrashed()->get() as $item) {
                 $item->restore();
+            }
+
+            if ($model->delivery) {
+                $model->delivery->has_invoice = true;
+                $model->delivery->save();
             }
         });
     }

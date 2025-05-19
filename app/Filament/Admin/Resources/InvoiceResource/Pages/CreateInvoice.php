@@ -118,4 +118,11 @@ class CreateInvoice extends CreateRecord
                     ]),
             ]);
     }
+
+    protected function afterCreate(): void
+    {
+        $this->delivery->update([
+            'has_invoice' => true,
+        ]);
+    }
 }
