@@ -12,17 +12,28 @@ class ViewDelivery extends ViewRecord
 
     protected function getHeaderActions(): array
     {
-        return [
+        $headerActions = [
             Actions\Action::make('print')
-                ->label('Print')
+                ->label('Print Surat Jalan')
                 ->icon('heroicon-o-printer')
                 ->url(route('print.delivery', $this->record->id))
                 ->openUrlInNewTab(),
-            Actions\Action::make('invoice')
+        ];
+
+        if ($this->record->invoice()->exists()) {
+            $headerActions[] = Actions\Action::make('view_invoice')
+                ->label('Lihat Invoice')
+                ->icon('heroicon-o-document-text')
+                ->url(route('filament.admin.resources.invoices.view', [$this->record->invoice->id]));
+        } else {
+            $headerActions[] = Actions\Action::make('create_invoice')
                 ->label('Buat Invoice')
                 ->icon('heroicon-o-document-text')
-                ->url(route('filament.admin.resources.invoices.create', ['delivery_id' => $this->record->id])),
-            Actions\EditAction::make(),
-        ];
+                ->url(route('filament.admin.resources.invoices.create', ['delivery_id' => $this->record->id]));
+        }
+
+        $headerActions[] = Actions\EditAction::make();
+        
+        return $headerActions;
     }
 }
