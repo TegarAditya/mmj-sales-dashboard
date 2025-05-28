@@ -59,18 +59,25 @@ class InvoiceResource extends Resource
                             ->relationship()
                             ->columns(4)
                             ->schema([
-                                Forms\Components\TextInput::make('product_id')
+                                Forms\Components\Select::make('product_id')
                                     ->label('Produk')
+                                    ->relationship('product', 'name')
+                                    ->searchable()
+                                    ->preload()
                                     ->columnSpanFull()
                                     ->required(),
                                 Forms\Components\TextInput::make('quantity')
                                     ->label('Jumlah')
+                                    ->numeric()
                                     ->required(),
                                 Forms\Components\TextInput::make('price')
                                     ->label('Harga Satuan')
+                                    ->numeric()
                                     ->required(),
                                 Forms\Components\TextInput::make('discount')
-                                    ->label('Diskon'),
+                                    ->label('Diskon')
+                                    ->numeric()
+                                    ->default(0),
                                 Forms\Components\TextInput::make('total_price')
                                     ->label('Total Harga')
                                     ->disabled()
