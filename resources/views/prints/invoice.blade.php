@@ -45,6 +45,14 @@
             </td>
         </tr>
 
+        <tr>
+            <td><strong>Semester</strong></td>
+            <td>:</td>
+            <td>
+                {{ $semester }}
+            </td>
+        </tr>
+
     </tbody>
 </table>
 @stop
@@ -65,20 +73,20 @@
 
     <tbody>
         @foreach ($invoice_items as $item)
-            @php
-            $product = $item->product;
-            @endphp
-            <tr>
-                <td class="text-center">{{ $loop->iteration }}</td>
-                <td>{{ $product->educationalLevel->name }} - {{ $product->curriculum->code ?? null }}</td>
-                <td>{{ $product->educationalSubject->name ?? null }}</td>
-                <td class="text-center">{{ $product->educationalClass->code ?? null }}</td>
-                <td class="text-center">{{ $product->page_count ?? null}}</td>
-                <td class="text-right">{{ format_currency($item->price) }}</td>
-                <td class="text-center">{{ $item->quantity}}</td>
-                <td class="text-right">{{ format_currency($item->total_price) }}</td>
-                <td class="text-right">{{ format_currency($item->total_discount) }}</td>
-            </tr>
+        @php
+        $product = $item->product;
+        @endphp
+        <tr>
+            <td class="text-center">{{ $loop->iteration }}</td>
+            <td>{{ $product->educationalLevel->name }} - {{ $product->curriculum->code ?? null }}</td>
+            <td>{{ $product->educationalSubject->name ?? null }}</td>
+            <td class="text-center">{{ $product->educationalClass->code ?? null }}</td>
+            <td class="text-center">{{ $product->page_count ?? null}}</td>
+            <td class="text-right">{{ format_currency($item->price) }}</td>
+            <td class="text-center">{{ $item->quantity}}</td>
+            <td class="text-right">{{ format_currency($item->total_price) }}</td>
+            <td class="text-right">{{ format_currency($item->total_discount) }}</td>
+        </tr>
         @endforeach
     </tbody>
 
@@ -124,8 +132,8 @@
 
 @push('styles')
 <style type="text/css" media="print">
-@page {
-    size: portrait;
-}
+    @page {
+        size: portrait;
+    }
 </style>
 @endpush

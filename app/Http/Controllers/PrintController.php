@@ -39,6 +39,7 @@ class PrintController extends Controller
         $total_discount = $invoice->items->sum('total_discount');
         $total_due = $total_price - $total_discount;
         $date = $invoice->date->setTimezone('Asia/Jakarta')->format('d/m/Y');
+        $semester = $invoice->delivery->semester->name ?? 'Semester Tidak Ditemukan';
 
         return view('prints.invoice', [
             'invoice' => $invoice,
@@ -47,6 +48,7 @@ class PrintController extends Controller
             'total_discount' => $total_discount,
             'total_due' => $total_due,
             'date' => $date,
+            'semester' => $semester,
         ]);
     }
 }
