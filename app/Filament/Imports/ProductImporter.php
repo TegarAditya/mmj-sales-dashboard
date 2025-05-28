@@ -66,10 +66,10 @@ class ProductImporter extends Importer
 
     public function resolveRecord(): ?Product
     {
-        return Product::firstOrNew([
-            // Update existing records, matching them by `$this->data['column_name']`
-            'code' => $this->data['code'],
-        ]);
+        // return Product::firstOrNew([
+        //     // Update existing records, matching them by `$this->data['column_name']`
+        //     'code' => $this->data['code'],
+        // ]);
 
         return new Product;
     }
