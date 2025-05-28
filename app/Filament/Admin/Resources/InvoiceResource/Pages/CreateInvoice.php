@@ -4,9 +4,11 @@ namespace App\Filament\Admin\Resources\InvoiceResource\Pages;
 
 use App\Filament\Admin\Resources\InvoiceResource;
 use App\Models\Delivery;
+use App\Models\Invoice;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Livewire\Attributes\Url;
 
@@ -21,9 +23,32 @@ class CreateInvoice extends CreateRecord
 
     protected static string $resource = InvoiceResource::class;
 
+    protected static bool $canCreateAnother = false;
+
     public function mount(): void
     {
+        $existingInvoice = Invoice::where('delivery_id', $this->delivery_id)->first();
+
+        if ($existingInvoice) {
+            $this->redirectRoute('filament.admin.resources.invoices.view', [
+                'record' => $existingInvoice->id,
+            ]);
+
+            Notification::make()
+                ->title('Surat Jalan sudah memiliki Invoice')
+                ->body('Silakan lihat detail Invoice yang sudah ada.')
+                ->danger()
+                ->send();
+        }
+
         $this->delivery = Delivery::find($this->delivery_id);
+
+        if ($this->delivery_id && !$this->delivery) {
+            Notification::make()
+                ->title('Surat Jalan tidak ditemukan')
+                ->danger()
+                ->send();
+        }
 
         if ($this->delivery) {
             $this->form->fill([
