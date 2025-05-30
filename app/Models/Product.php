@@ -92,6 +92,11 @@ class Product extends Model
         return $this->hasMany(DeliveryItem::class);
     }
 
+    public function invoiceItems()
+    {
+        return $this->hasMany(InvoiceItem::class);
+    }
+
     public function getStock(): int
     {
         $addition = (int) $this->stockInboundItems()->sum('quantity');
