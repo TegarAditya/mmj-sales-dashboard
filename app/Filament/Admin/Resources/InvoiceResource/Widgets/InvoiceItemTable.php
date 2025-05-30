@@ -22,6 +22,7 @@ class InvoiceItemTable extends BaseWidget
                 InvoiceItem::query()
                     ->where('invoice_id', $this->record->id)
                     ->with(['product'])
+                    ->selectRaw('*, total_price - total_discount as total_discounted_price')
             )
             ->heading(null)
             ->columns([
@@ -44,7 +45,7 @@ class InvoiceItemTable extends BaseWidget
                     ->sortable()
                     ->numeric()
                     ->formatStateUsing(fn($state) => format_currency($state)),
-                Tables\Columns\TextColumn::make('total_price')
+                Tables\Columns\TextColumn::make('total_discounted_price')
                     ->label('Total Harga')
                     ->sortable()
                     ->numeric()
