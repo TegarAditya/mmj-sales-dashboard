@@ -19,7 +19,7 @@ class CreateInvoice extends CreateRecord
 
     public ?array $data = [];
 
-    public ?Delivery $delivery;
+    public ?Delivery $delivery = null;
 
     protected static string $resource = InvoiceResource::class;
 
@@ -101,15 +101,17 @@ class CreateInvoice extends CreateRecord
                             ->default(now())
                             ->required(),
                     ]),
-                Forms\Components\Section::make('Data Detail')
+                Forms\Components\Section::make('Daftar Item')
                     ->columns(1)
                     ->icon('heroicon-o-document-text')
                     ->schema([
                         Forms\Components\Repeater::make('items')
+                            ->hiddenLabel()
                             ->relationship()
                             ->columns(4)
-                            ->deletable(false)
-                            ->addable(false)
+                            ->minItems(1)
+                            ->deletable($this->delivery === null)
+                            ->addable($this->delivery === null)
                             ->schema([
                                 Forms\Components\Select::make('product_id')
                                     ->label('Produk')
