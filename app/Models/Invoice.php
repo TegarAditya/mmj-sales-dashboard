@@ -67,7 +67,7 @@ class Invoice extends Model
 
     public function getTotalDiscount()
     {
-        return $this->items->sum('discount');
+        return $this->items->sum('total_discount');
     }
 
     public function getTotalDue()
