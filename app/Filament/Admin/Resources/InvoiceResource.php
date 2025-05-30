@@ -37,13 +37,23 @@ class InvoiceResource extends Resource
                     ->columns(2)
                     ->icon('heroicon-o-user')
                     ->schema([
+                        Forms\Components\Select::make('semester_id')
+                            ->label('Semester')
+                            ->relationship('semester', 'name')
+                            ->disabled()
+                            ->dehydrated()
+                            ->required(),
                         Forms\Components\Select::make('customer_id')
                             ->label('Customer')
                             ->relationship('customer', 'name')
+                            ->disabled()
+                            ->dehydrated()
                             ->required(),
                         Forms\Components\Select::make('delivery_id')
                             ->label('Surat Jalan')
                             ->relationship('delivery', 'document_number')
+                            ->disabled()
+                            ->dehydrated()
                             ->required(),
                         Forms\Components\DatePicker::make('date')
                             ->label('Tanggal')
@@ -58,30 +68,37 @@ class InvoiceResource extends Resource
                         Forms\Components\Repeater::make('items')
                             ->relationship()
                             ->columns(4)
+                            ->deletable(false)
+                            ->addable(false)
                             ->schema([
                                 Forms\Components\Select::make('product_id')
                                     ->label('Produk')
                                     ->relationship('product', 'name')
-                                    ->searchable()
-                                    ->preload()
+                                    ->disabled()
+                                    ->dehydrated()
                                     ->columnSpanFull()
                                     ->required(),
                                 Forms\Components\TextInput::make('quantity')
                                     ->label('Jumlah')
+                                    ->disabled()
+                                    ->dehydrated()
                                     ->numeric()
+                                    ->live()
                                     ->required(),
                                 Forms\Components\TextInput::make('price')
                                     ->label('Harga Satuan')
+                                    ->prefix('Rp')
                                     ->numeric()
+                                    ->live()
                                     ->required(),
                                 Forms\Components\TextInput::make('discount')
                                     ->label('Diskon')
+                                    ->live()
                                     ->numeric()
-                                    ->default(0),
-                                Forms\Components\TextInput::make('total_price')
+                                    ->prefix('Rp'),
+                                Forms\Components\Placeholder::make('total_price')
                                     ->label('Total Harga')
-                                    ->disabled()
-                                    ->dehydrated(false),
+                                    ->content(fn($get) => format_currency((int) $get('price') * (int) $get('quantity') - (int) $get('discount') * (int) $get('quantity')))
                             ]),
                     ]),
             ]);
