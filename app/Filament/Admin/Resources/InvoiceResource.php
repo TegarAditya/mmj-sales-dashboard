@@ -144,8 +144,10 @@ class InvoiceResource extends Resource
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\SelectFilter::make('customer_id')
+                    ->label('Customer')
                     ->relationship('customer', 'name')
                     ->multiple()
+                    ->preload()
                     ->placeholder('Pilih Customer'),
             ])
             ->actions([
