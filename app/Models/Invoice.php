@@ -25,6 +25,21 @@ class Invoice extends Model
         'date' => 'datetime',
     ];
 
+    public function getTotalPriceAttribute()
+    {
+        return $this->getTotalPrice();
+    }
+
+    public function getTotalDiscountAttribute()
+    {
+        return $this->getTotalDiscount();
+    }
+
+    public function getTotalDueAttribute()
+    {
+        return $this->getTotalDue();
+    }
+
     public function customer()
     {
         return $this->belongsTo(Customer::class);
