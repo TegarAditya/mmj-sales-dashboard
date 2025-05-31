@@ -31,22 +31,39 @@ class StockMovementTable extends BaseWidget
             ->heading('Riwayat Pergerakan Stok')
             ->paginated(false)
             ->columns([
+                Tables\Columns\TextColumn::make('no.')
+                    ->label('No.')
+                    ->rowIndex(),
                 Tables\Columns\TextColumn::make('document_number')
                     ->label('Nomor Dokumen'),
                 Tables\Columns\TextColumn::make('type')
                     ->label('Tipe')
-                    ->sortable()
-                    ->searchable(),
+                    ->badge()
+                    ->color(fn ($record) => match ($record->type) {
+                        'INBOUND' => 'success',
+                        'RETURN' => 'warning',
+                        'DELIVERY' => 'primary',
+                        default => 'secondary',
+                    }),
                 Tables\Columns\TextColumn::make('quantity')
                     ->label('Jumlah')
-                    ->sortable()
                     ->numeric(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal')
-                    ->dateTime()
-                    ->sortable(),
+                    ->dateTime(timezone: 'Asia/Jakarta'),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'asc')
+            ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->label('Lihat Dokumen')
+                    ->button()
+                    ->url(fn ($record) => match ($record->type) {
+                        'INBOUND' => route('filament.admin.resources.stock-inbounds.view', $record->document_id),
+                        'RETURN' => route('filament.admin.resources.return-goods.view', $record->document_id),
+                        'DELIVERY' => route('filament.admin.resources.deliveries.view', $record->document_id),
+                        default => '#',
+                    }),
+            ]);
     }
 
     protected function getTableQuery(): Builder|Relation|null
@@ -58,6 +75,7 @@ class StockMovementTable extends BaseWidget
             ->where('product_id', $productId)
             ->selectRaw("
                         stock_inbounds.document_number as document_number,
+                        stock_inbound_items.stock_inbound_id as document_id,
                         stock_inbound_items.product_id as product_id,
                         stock_inbound_items.quantity as quantity,
                         'INBOUND' as type,
@@ -70,6 +88,7 @@ class StockMovementTable extends BaseWidget
             ->where('product_id', $productId)
             ->selectRaw("
                         return_goods.document_number as document_number,
+                        return_good_items.return_good_id as document_id,
                         return_good_items.product_id as product_id,
                         return_good_items.quantity as quantity,
                         'RETURN' as type,
@@ -82,6 +101,7 @@ class StockMovementTable extends BaseWidget
             ->where('product_id', $productId)
             ->selectRaw("
                         deliveries.document_number as document_number,
+                        delivery_items.delivery_id as document_id,
                         delivery_items.product_id as product_id,
                         -ABS(delivery_items.quantity) as quantity,
                         'DELIVERY' as type,
@@ -92,6 +112,6 @@ class StockMovementTable extends BaseWidget
         return $inbounds
             ->union($returns)
             ->union($deliveries)
-            ->orderBy('created_at', 'desc');
+            ->orderBy('created_at', 'asc');
     }
 }
