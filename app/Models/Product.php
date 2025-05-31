@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\HasUserAuditable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -77,22 +79,36 @@ class Product extends Model
         return $this->belongsTo(EducationalSubject::class);
     }
 
-    public function stockInboundItems()
+    public function stockInboundItems(): HasMany
     {
         return $this->hasMany(StockInboundItem::class);
     }
 
-    public function estimationItems()
+    public function estimationItems(): HasMany
     {
         return $this->hasMany(EstimationItem::class);
     }
 
-    public function deliveryItems()
+    public function deliveries(): BelongsToMany
+    {
+        return $this->belongsToMany(Delivery::class, 'delivery_items')
+            ->withPivot('quantity', 'price', 'total')
+            ->withTimestamps();
+    }
+
+    public function deliveryItems(): HasMany
     {
         return $this->hasMany(DeliveryItem::class);
     }
 
-    public function invoiceItems()
+    public function invoices(): BelongsToMany
+    {
+        return $this->belongsToMany(Invoice::class, 'invoice_items')
+            ->withPivot('quantity', 'price', 'discount', 'total_price', 'total_discount', 'total_due')
+            ->withTimestamps();
+    }
+
+    public function invoiceItems(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
     }
