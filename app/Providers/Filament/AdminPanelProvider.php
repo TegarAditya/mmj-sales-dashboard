@@ -37,7 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->passwordReset()
             ->databaseNotifications()
             ->databaseTransactions()
-            ->unsavedChangesAlerts()
+            ->unsavedChangesAlerts(fn() => config('app.env') === 'production')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
                 'primary' => Color::Blue,
