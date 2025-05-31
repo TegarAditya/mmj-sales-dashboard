@@ -13,7 +13,7 @@ class EstimationBalance extends Page
 {
     use HasFiltersForm;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     protected static ?string $navigationLabel = 'Saldo Estimasi';
 
