@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasUserAuditable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ReturnGoodItem extends Model
 {
+    use SoftDeletes, HasUserAuditable;
+    
     protected $fillable = [
         'return_good_id',
         'product_id',

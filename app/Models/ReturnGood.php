@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\HasUserAuditable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ReturnGood extends Model
 {
+    use SoftDeletes, HasUserAuditable;
+    
     protected $fillable = [
         'return_date',
         'invoice_id',
