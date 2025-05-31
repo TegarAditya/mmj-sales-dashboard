@@ -6,6 +6,7 @@ use App\Models\DeliveryItem;
 use App\Models\ReturnGoodItem;
 use App\Models\StockInboundItem;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -29,17 +30,19 @@ class StockMovementTable extends BaseWidget
         return $table
             ->query($this->getTableQuery())
             ->heading('Riwayat Pergerakan Stok')
-            ->paginated(false)
             ->columns([
                 Tables\Columns\TextColumn::make('no.')
                     ->label('No.')
                     ->rowIndex(),
                 Tables\Columns\TextColumn::make('document_number')
                     ->label('Nomor Dokumen'),
+                Tables\Columns\TextColumn::make('actor')
+                    ->label('Aktor')
+                    ->weight(FontWeight::SemiBold),
                 Tables\Columns\TextColumn::make('type')
                     ->label('Tipe')
                     ->badge()
-                    ->color(fn ($record) => match ($record->type) {
+                    ->color(fn($record) => match ($record->type) {
                         'INBOUND' => 'success',
                         'RETURN' => 'warning',
                         'DELIVERY' => 'primary',
@@ -50,14 +53,14 @@ class StockMovementTable extends BaseWidget
                     ->numeric(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal')
-                    ->dateTime(timezone: 'Asia/Jakarta'),
+                    ->dateTime(timezone: 'Asia/Jakarta', format: 'l, d F Y H:i:s'),
             ])
             ->defaultSort('created_at', 'asc')
             ->actions([
                 Tables\Actions\ViewAction::make()
                     ->label('Lihat Dokumen')
                     ->button()
-                    ->url(fn ($record) => match ($record->type) {
+                    ->url(fn($record) => match ($record->type) {
                         'INBOUND' => route('filament.admin.resources.stock-inbounds.view', $record->document_id),
                         'RETURN' => route('filament.admin.resources.return-goods.view', $record->document_id),
                         'DELIVERY' => route('filament.admin.resources.deliveries.view', $record->document_id),
@@ -71,7 +74,7 @@ class StockMovementTable extends BaseWidget
         $productId = $this->record->id;
 
         $inbounds = StockInboundItem::query()
-            ->with('stockInbound')
+            ->with(['stockInbound.supplier'])
             ->where('product_id', $productId)
             ->selectRaw("
                         stock_inbounds.document_number as document_number,
@@ -79,9 +82,11 @@ class StockMovementTable extends BaseWidget
                         stock_inbound_items.product_id as product_id,
                         stock_inbound_items.quantity as quantity,
                         'INBOUND' as type,
-                        stock_inbounds.created_at as created_at
-                    ")
-            ->join('stock_inbounds', 'stock_inbound_items.stock_inbound_id', '=', 'stock_inbounds.id');
+                        stock_inbounds.created_at as created_at,
+                        suppliers.name as actor
+            ")
+            ->join('stock_inbounds', 'stock_inbound_items.stock_inbound_id', '=', 'stock_inbounds.id')
+            ->leftJoin('suppliers', 'stock_inbounds.supplier_id', '=', 'suppliers.id');
 
         $returns = ReturnGoodItem::query()
             ->with('returnGood')
@@ -92,9 +97,11 @@ class StockMovementTable extends BaseWidget
                         return_good_items.product_id as product_id,
                         return_good_items.quantity as quantity,
                         'RETURN' as type,
-                        return_goods.created_at as created_at
+                        return_goods.created_at as created_at,
+                        customers.name as actor
                     ")
-            ->join('return_goods', 'return_good_items.return_good_id', '=', 'return_goods.id');
+            ->join('return_goods', 'return_good_items.return_good_id', '=', 'return_goods.id')
+            ->leftJoin('customers', 'return_goods.customer_id', '=', 'customers.id');
 
         $deliveries = DeliveryItem::query()
             ->with('delivery')
@@ -105,9 +112,11 @@ class StockMovementTable extends BaseWidget
                         delivery_items.product_id as product_id,
                         -ABS(delivery_items.quantity) as quantity,
                         'DELIVERY' as type,
-                        deliveries.created_at as created_at
+                        deliveries.created_at as created_at,
+                        customers.name as actor
                     ")
-            ->join('deliveries', 'delivery_items.delivery_id', '=', 'deliveries.id');
+            ->join('deliveries', 'delivery_items.delivery_id', '=', 'deliveries.id')
+            ->leftJoin('customers', 'deliveries.customer_id', '=', 'customers.id');
 
         return $inbounds
             ->union($returns)
