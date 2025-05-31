@@ -13,6 +13,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\HtmlString;
 
 class StockMovementTable extends BaseWidget
 {
@@ -37,8 +38,9 @@ class StockMovementTable extends BaseWidget
                 Tables\Columns\TextColumn::make('document_number')
                     ->label('Nomor Dokumen'),
                 Tables\Columns\TextColumn::make('actor')
-                    ->label('Aktor')
-                    ->weight(FontWeight::SemiBold),
+                    ->label('Keterangan')
+                    ->html()
+                    ->getStateUsing(fn($record) => $this->formatActorColumn($record)),
                 Tables\Columns\TextColumn::make('type')
                     ->label('Tipe')
                     ->badge()
@@ -122,5 +124,10 @@ class StockMovementTable extends BaseWidget
             ->union($returns)
             ->union($deliveries)
             ->orderBy('created_at', 'asc');
+    }
+
+    protected function formatActorColumn($record): string
+    {
+        return new HtmlString(($record->type === 'INBOUND' ? 'Dari: ' : 'Untuk: ') . "<span class=\"font-semibold\"/>{$record->actor}</span>");
     }
 }
