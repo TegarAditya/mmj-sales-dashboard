@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\ProductResource\Pages;
 
 use App\Filament\Admin\Resources\ProductResource;
+use App\Filament\Admin\Resources\ProductResource\Widgets\StockMovementTable;
 use Filament\Actions;
 use Filament\Infolists;
 use Filament\Infolists\Components\TextEntry\TextEntrySize;
@@ -123,5 +124,12 @@ class ViewProduct extends ViewRecord
                 ])
                     ->from('md'),
             ]);
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+            StockMovementTable::class,
+        ];
     }
 }
