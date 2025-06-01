@@ -8,6 +8,7 @@ use App\Models\StockInboundItem;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,7 +37,7 @@ class StockMovementTable extends BaseWidget
                     ->label('No.')
                     ->rowIndex(),
                 Tables\Columns\TextColumn::make('document_number')
-                    ->label('Nomor Dokumen'),
+                    ->label('Nomor Referensi'),
                 Tables\Columns\TextColumn::make('actor')
                     ->label('Keterangan')
                     ->html()
@@ -52,7 +53,8 @@ class StockMovementTable extends BaseWidget
                     }),
                 Tables\Columns\TextColumn::make('quantity')
                     ->label('Jumlah')
-                    ->numeric(),
+                    ->numeric()
+                    ->summarize(Sum::make()),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal')
                     ->dateTime(timezone: 'Asia/Jakarta', format: 'l, d F Y H:i:s'),
@@ -60,7 +62,7 @@ class StockMovementTable extends BaseWidget
             ->defaultSort('created_at', 'asc')
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->label('Lihat Dokumen')
+                    ->label('Lihat Referensi')
                     ->button()
                     ->url(fn($record) => match ($record->type) {
                         'INBOUND' => route('filament.admin.resources.stock-inbounds.view', $record->document_id),
