@@ -122,7 +122,7 @@ class ViewProduct extends ViewRecord
                         ->grow(false)
                         ->columns(2),
                 ])
-                    ->from('md'),
+                    ->from('lg'),
             ]);
     }
 
