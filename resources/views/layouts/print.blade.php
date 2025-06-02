@@ -18,7 +18,7 @@
         @section('header')
         <div class="row align-items-center">
             <div class="col-12 text-left">
-                <img src="{{ asset('images/prints/header.png') }}" class="print-logo" style="max-width: 100%" />
+                <img src="{{ asset('images/prints/header-wide.webp') }}" class="print-logo" style="max-width: 100%" />
             </div>
         </div>
         <hr class="my-2" />
