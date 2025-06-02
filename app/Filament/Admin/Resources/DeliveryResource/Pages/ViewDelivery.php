@@ -3,7 +3,10 @@
 namespace App\Filament\Admin\Resources\DeliveryResource\Pages;
 
 use App\Filament\Admin\Resources\DeliveryResource;
+use App\Filament\Admin\Resources\DeliveryResource\Widgets;
 use Filament\Actions;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewDelivery extends ViewRecord
@@ -33,7 +36,36 @@ class ViewDelivery extends ViewRecord
         }
 
         $headerActions[] = Actions\EditAction::make();
-        
+
         return $headerActions;
+    }
+
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->columns(1)
+            ->schema([
+                Infolists\Components\Section::make()
+                    ->columns(2)
+                    ->schema([
+                        Infolists\Components\TextEntry::make('document_number')
+                            ->label('No. Pengiriman')
+                            ->weight('bold'),
+                        Infolists\Components\TextEntry::make('customer.name')
+                            ->label('Nama Pelanggan'),
+                        Infolists\Components\TextEntry::make('semester.name')
+                            ->label('Semester'),
+                        Infolists\Components\TextEntry::make('date')
+                            ->label('Tanggal Pengiriman')
+                            ->date(format: 'D, d:m:Y'),
+                    ]),
+            ]);
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+            Widgets\DeliveryItemTable::class,
+        ];
     }
 }
