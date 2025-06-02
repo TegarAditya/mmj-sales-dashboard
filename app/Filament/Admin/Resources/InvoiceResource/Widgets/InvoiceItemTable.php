@@ -6,6 +6,7 @@ use App\Models\InvoiceItem;
 use App\Models\Product;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Tables;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
@@ -49,6 +50,10 @@ class InvoiceItemTable extends BaseWidget
                     ->label('Total Harga')
                     ->sortable()
                     ->numeric()
+                    ->summarize(
+                        Sum::make()
+                            ->formatStateUsing(fn($state) => format_currency($state))
+                    )
                     ->formatStateUsing(fn($state) => format_currency($state)),
             ]);
     }
