@@ -13,13 +13,17 @@ class ReturnGood extends Model
     use SoftDeletes, HasUserAuditable;
     
     protected $fillable = [
-        'return_date',
-        'invoice_id',
-        'user_id',
+        'customer_id',
+        'semester_id',
+        'document_number',
+        'note',
+        'total_quantity',
+        'total_price',
+        'date',
     ];
 
     protected $casts = [
-        'return_date' => 'datetime',
+        'date' => 'date',
     ];
 
     public function semester(): BelongsTo
