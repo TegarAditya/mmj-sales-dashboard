@@ -32,10 +32,11 @@ class ViewDelivery extends ViewRecord
             $headerActions[] = Actions\Action::make('create_invoice')
                 ->label('Buat Invoice')
                 ->icon('heroicon-o-document-text')
+                ->requiresConfirmation()
                 ->url(route('filament.admin.resources.invoices.create', ['delivery_id' => $this->record->id]));
         }
 
-        $headerActions[] = Actions\EditAction::make();
+        $headerActions[] = Actions\EditAction::make()->visible(! $this->record->invoice()->exists());
 
         return $headerActions;
     }
