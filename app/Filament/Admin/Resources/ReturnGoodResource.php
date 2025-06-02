@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\ReturnGoodResource\Pages;
 use App\Filament\Admin\Resources\ReturnGoodResource\RelationManagers;
+use App\Models\Product;
 use App\Models\ReturnGood;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -27,36 +28,67 @@ class ReturnGoodResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('semester_id')
-                    ->relationship('semester', 'name')
-                    ->required(),
-                Forms\Components\Select::make('customer_id')
-                    ->relationship('customer', 'name')
-                    ->required(),
-                Forms\Components\TextInput::make('document_number')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\DatePicker::make('date')
-                    ->required(),
-                Forms\Components\Textarea::make('note')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('total_quantity')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\TextInput::make('total_price')
-                    ->required()
-                    ->numeric()
-                    ->default(0.00),
-                Forms\Components\TextInput::make('created_by')
-                    ->numeric()
-                    ->default(null),
-                Forms\Components\TextInput::make('updated_by')
-                    ->numeric()
-                    ->default(null),
-                Forms\Components\TextInput::make('deleted_by')
-                    ->numeric()
-                    ->default(null),
+                Forms\Components\Section::make('Informasi Retur')
+                    ->columns(3)
+                    ->schema([
+                        Forms\Components\Select::make('semester_id')
+                            ->label('Semester Retur')
+                            ->relationship('semester', 'name')
+                            ->preload()
+                            ->live()
+                            ->required(),
+                        Forms\Components\Select::make('customer_id')
+                            ->label('Customer')
+                            ->relationship('customer', 'name')
+                            ->preload()
+                            ->live()
+                            ->required(),
+                        Forms\Components\DatePicker::make('date')
+                            ->label('Tanggal Retur')
+                            ->timezone('Asia/Jakarta')
+                            ->format('Y-m-d')
+                            ->required(),
+                        Forms\Components\Textarea::make('note')
+                            ->label('Catatan')
+                            ->columnSpanFull(),
+                    ]),
+                Forms\Components\Section::make('Item Retur')
+                    ->schema([
+                        Forms\Components\Repeater::make('items')
+                            ->hiddenLabel()
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\Select::make('product_id')
+                                    ->label('Produk')
+                                    ->required()
+                                    ->options(function ($get) {
+                                        $customerId = $get('../../customer_id');
+                                        $semesterId = $get('../../semester_id');
+
+                                        if ($customerId && $semesterId) {
+                                            return Product::whereHas('deliveries', function (Builder $query) use ($customerId, $semesterId) {
+                                                $query
+                                                    ->where('customer_id', $customerId)
+                                                    ->where('semester_id', $semesterId);
+                                            })->pluck('name', 'id');
+                                        }
+
+                                        return [];
+                                    })
+                                    ->searchable()
+                                    ->preload(),
+                                Forms\Components\TextInput::make('quantity')
+                                    ->label('Jumlah')
+                                    ->numeric()
+                                    ->required(),
+                                Forms\Components\TextInput::make('price')
+                                    ->label('Harga Satuan')
+                                    ->numeric()
+                                    ->required(),
+                            ])
+                            ->columns(3)
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
