@@ -11,6 +11,7 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\FontWeight;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 
 class ViewProduct extends ViewRecord
@@ -74,11 +75,13 @@ class ViewProduct extends ViewRecord
                             ->weight(FontWeight::Bold),
                         Infolists\Components\TextEntry::make('cost')
                             ->label('Harga Pokok')
+                            ->visible(Auth::user()->hasRole('super-admin'))
                             ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold)
                             ->formatStateUsing(fn($state) => format_currency($state)),
                         Infolists\Components\TextEntry::make('price')
                             ->label('Harga Jual')
+                            ->visible(Auth::user()->hasRole('super-admin'))
                             ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold)
                             ->formatStateUsing(fn($state) => format_currency($state)),
