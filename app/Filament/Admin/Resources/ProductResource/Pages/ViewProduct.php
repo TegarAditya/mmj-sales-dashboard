@@ -75,13 +75,13 @@ class ViewProduct extends ViewRecord
                             ->weight(FontWeight::Bold),
                         Infolists\Components\TextEntry::make('cost')
                             ->label('Harga Pokok')
-                            ->visible(Auth::user()->hasRole('super-admin'))
+                            ->visible(Auth::user()->hasRole('supe_admin'))
                             ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold)
                             ->formatStateUsing(fn($state) => format_currency($state)),
                         Infolists\Components\TextEntry::make('price')
                             ->label('Harga Jual')
-                            ->visible(Auth::user()->hasRole('super-admin'))
+                            ->visible(Auth::user()->hasRole('super_admin'))
                             ->size(TextEntrySize::Medium)
                             ->weight(FontWeight::Bold)
                             ->formatStateUsing(fn($state) => format_currency($state)),
