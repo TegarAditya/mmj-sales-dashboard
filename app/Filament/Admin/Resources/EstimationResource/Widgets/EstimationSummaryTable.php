@@ -24,7 +24,7 @@ class EstimationSummaryTable extends BaseWidget
     {
         $this->semesterId = ! is_null($this->filters['semester_id'] ?? null) ? 
                 $this->filters['semester_id'] : 
-                Semester::query()->first()->id;
+                Semester::query()->latest('start_date')->first()->id;
 
         return $table
             ->query(
