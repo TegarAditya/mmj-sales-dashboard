@@ -4,15 +4,21 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\ReturnGoodResource\Pages;
 use App\Filament\Admin\Resources\ReturnGoodResource\RelationManagers;
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\ReturnGood;
+use App\Models\Semester;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Livewire\Component;
+use NunoMaduro\Collision\Adapters\Phpunit\State;
 
 class ReturnGoodResource extends Resource
 {
@@ -31,15 +37,24 @@ class ReturnGoodResource extends Resource
                 Forms\Components\Section::make('Informasi Retur')
                     ->columns(3)
                     ->schema([
-                        Forms\Components\Select::make('semester_id')
-                            ->label('Semester Retur')
-                            ->relationship('semester', 'name')
-                            ->preload()
-                            ->live()
-                            ->required(),
                         Forms\Components\Select::make('customer_id')
                             ->label('Customer')
                             ->relationship('customer', 'name')
+                            ->preload()
+                            ->live()
+                            ->required(),
+                        Forms\Components\Select::make('semester_id')
+                            ->label('Semester Retur')
+                            ->relationship('semester', 'name', modifyQueryUsing: function (Builder $query, Get $get) {
+                                $customerId = $get('customer_id');
+
+                                if ($customerId) {
+                                    $query->whereHas('deliveries', function (Builder $q) use ($customerId) {
+                                        $q->where('customer_id', $customerId);
+                                    });
+                                }
+                            })
+                            ->disabled(fn(Get $get) => $get('customer_id') === null)
                             ->preload()
                             ->live()
                             ->required(),
@@ -47,6 +62,7 @@ class ReturnGoodResource extends Resource
                             ->label('Tanggal Retur')
                             ->timezone('Asia/Jakarta')
                             ->format('Y-m-d')
+                            ->default(now())
                             ->required(),
                         Forms\Components\Textarea::make('note')
                             ->label('Catatan')
@@ -57,10 +73,12 @@ class ReturnGoodResource extends Resource
                         Forms\Components\Repeater::make('items')
                             ->hiddenLabel()
                             ->relationship()
+                            ->disabled(fn(Get $get) => $get('semester_id') === null || $get('customer_id') === null)
                             ->schema([
                                 Forms\Components\Select::make('product_id')
                                     ->label('Produk')
                                     ->required()
+                                    ->columnSpan(2)
                                     ->options(function ($get) {
                                         $customerId = $get('../../customer_id');
                                         $semesterId = $get('../../semester_id');
@@ -75,18 +93,33 @@ class ReturnGoodResource extends Resource
 
                                         return [];
                                     })
+                                    ->default(null)
+                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                    ->afterStateUpdated(function (Get $get, Set $set) {
+                                        $productId = $get('product_id');
+                                        if ($productId) {
+                                            $product = Product::find($productId);
+                                            if ($product) {
+                                                $set('price', $product->price);
+                                            }
+                                        } else {
+                                            $set('price', null);
+                                        }
+                                    })
+                                    ->live()
                                     ->searchable()
                                     ->preload(),
                                 Forms\Components\TextInput::make('quantity')
                                     ->label('Jumlah')
                                     ->numeric()
+                                    ->default(1)
                                     ->required(),
                                 Forms\Components\TextInput::make('price')
                                     ->label('Harga Satuan')
                                     ->numeric()
                                     ->required(),
                             ])
-                            ->columns(3)
+                            ->columns(4)
                             ->columnSpanFull(),
                     ]),
             ]);
@@ -115,13 +148,16 @@ class ReturnGoodResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_by')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_by')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('deleted_by')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
