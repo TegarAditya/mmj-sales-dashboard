@@ -48,6 +48,17 @@ class InvoiceItem extends Model
         return $this->quantity * $this->discount;
     }
 
+    public function updateInvoiceTotals(): void
+    {
+        $invoice = $this->invoice;
+        if ($invoice) {
+            $invoice->total_price = $invoice->items->sum('total_price');
+            $invoice->total_discount = $invoice->items->sum('total_discount');
+            $invoice->total_due = $invoice->total_price - $invoice->total_discount;
+            $invoice->save();
+        }
+    }
+
     protected static function booted(): void
     {
         static::creating(function ($model) {
@@ -58,6 +69,26 @@ class InvoiceItem extends Model
         static::updating(function ($model) {
             $model->total_price = $model->getTotalPrice();
             $model->total_discount = $model->getTotalDiscount();
+        });
+
+        static::saved(function ($item) {
+            $item->updateInvoiceTotals();
+        });
+
+        static::updated(function ($item) {
+            $item->updateInvoiceTotals();
+        });
+
+        static::deleted(function ($item) {
+            $item->updateInvoiceTotals();
+        });
+
+        static::restored(function ($item) {
+            $item->updateInvoiceTotals();
+        });
+
+        static::forceDeleted(function ($item) {
+            $item->updateInvoiceTotals();
         });
     }
 }
