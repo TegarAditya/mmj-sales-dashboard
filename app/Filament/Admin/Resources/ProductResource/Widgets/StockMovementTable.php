@@ -130,6 +130,6 @@ class StockMovementTable extends BaseWidget
 
     protected function formatActorColumn($record): string
     {
-        return new HtmlString(($record->type === 'INBOUND' ? 'Dari: ' : 'Untuk: ') . "<span class=\"font-semibold\"/>{$record->actor}</span>");
+        return new HtmlString(($record->type === 'DELIVERY' ? 'Untuk: ' : 'Dari: ') . "<span class=\"font-semibold\"/>{$record->actor}</span>");
     }
 }
