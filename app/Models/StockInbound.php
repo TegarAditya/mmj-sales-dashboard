@@ -57,5 +57,11 @@ class StockInbound extends Model
                 $item->restore();
             }
         });
+
+        static::forceDeleting(function ($model) {
+            foreach ($model->items as $item) {
+                $item->forceDelete();
+            }
+        });
     }
 }
