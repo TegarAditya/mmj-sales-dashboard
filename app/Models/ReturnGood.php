@@ -73,6 +73,10 @@ class ReturnGood extends Model
             $model->items()->delete();
         });
 
+        static::forceDeleting(function ($model) {
+            $model->items()->forceDelete();
+        });
+
         static::restoring(function ($model) {
             $model->items()->restore();
         });
