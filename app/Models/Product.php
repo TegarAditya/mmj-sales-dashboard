@@ -113,9 +113,21 @@ class Product extends Model
         return $this->hasMany(InvoiceItem::class);
     }
 
+    public function returnGoods(): BelongsToMany
+    {
+        return $this->belongsToMany(ReturnGood::class, 'return_good_items')
+            ->withPivot('quantity', 'price', 'total')
+            ->withTimestamps();
+    }
+
+    public function returnGoodItems(): HasMany
+    {
+        return $this->hasMany(ReturnGoodItem::class);
+    }
+
     public function getStock(): int
     {
-        $addition = (int) $this->stockInboundItems()->sum('quantity');
+        $addition = (int) $this->stockInboundItems()->sum('quantity') + (int) $this->returnGoodItems()->sum('quantity');
         $subtraction = (int) $this->deliveryItems()->sum('quantity');
         return $addition - $subtraction;
     }
