@@ -204,9 +204,4 @@ class ReturnGoodResource extends Resource
             'edit' => Pages\EditReturnGood::route('/{record}/edit'),
         ];
     }
-
-    public static function isDiscovered(): bool
-    {
-        return config('app.env')  !== 'production';
-    }
 }
