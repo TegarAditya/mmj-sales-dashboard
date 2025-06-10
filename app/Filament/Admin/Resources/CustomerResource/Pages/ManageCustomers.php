@@ -12,6 +12,8 @@ class ManageCustomers extends ManageRecords
 {
     protected static string $resource = CustomerResource::class;
 
+    protected static ?string $title = 'Daftar Customer';
+
     protected function getHeaderActions(): array
     {
         return [
