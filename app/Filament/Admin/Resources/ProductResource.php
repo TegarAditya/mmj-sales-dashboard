@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class ProductResource extends Resource
 {
@@ -135,6 +136,7 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('cost')
                     ->label('Harga Pokok')
                     ->sortable()
+                    ->visible(fn () => static::canViewCost())
                     ->formatStateUsing(fn ($state) => format_currency($state)),
                 Tables\Columns\TextColumn::make('price')
                     ->label('Harga Jual')
@@ -180,6 +182,11 @@ class ProductResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function canViewCost(): bool
+    {
+        return Auth::user()->hasRole('super_admin');
     }
 
     public static function getPages(): array
