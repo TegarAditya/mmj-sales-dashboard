@@ -7,6 +7,8 @@ use App\Filament\Admin\Resources\SupplierResource\RelationManagers;
 use App\Models\Supplier;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,11 +19,13 @@ class SupplierResource extends Resource
 {
     protected static ?string $model = Supplier::class;
 
-    protected static ?string $modelLabel = 'Daftar Supplier';
+    protected static ?string $modelLabel = 'Supplier';
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?string $navigationGroup = 'Supplier';
+
+    protected static ?string $navigationLabel = 'Daftar Supplier';
 
     public static function form(Form $form): Form
     {
@@ -62,6 +66,61 @@ class SupplierResource extends Resource
                     ->columnSpanFull()
                     ->maxLength(255)
                     ->default(null),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Infolists\Components\Section::make('Data Customer')
+                    ->columns(2)
+                    ->icon('heroicon-o-user')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('code')
+                            ->label('Kode Customer'),
+                        Infolists\Components\TextEntry::make('name')
+                            ->label('Nama Customer'),
+                        Infolists\Components\TextEntry::make('email')
+                            ->label('Email'),
+                        Infolists\Components\TextEntry::make('phone')
+                            ->label('Telepon'),
+                        Infolists\Components\TextEntry::make('website')
+                            ->label('Website'),
+                        Infolists\Components\TextEntry::make('contact_person_name')
+                            ->label('Nama CP'),
+                        Infolists\Components\TextEntry::make('contact_person_phone')
+                            ->label('Telepon CP'),
+                        Infolists\Components\TextEntry::make('address')
+                            ->label('Alamat')
+                            ->columnSpanFull(),
+                    ]),
+                Infolists\Components\Section::make('Data Audit')
+                    ->columns(2)
+                    ->icon('heroicon-o-clock')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('createdBy.name')
+                            ->label('Dibuat Oleh'),
+                        Infolists\Components\TextEntry::make('created_at')
+                            ->label('Dibuat Pada')
+                            ->dateTime(),
+                        Infolists\Components\TextEntry::make('updatedBy.name')
+                            ->label('Diedit Oleh')
+                            ->default('-')
+                            ->visible(fn(Supplier $record) => $record->updatedBy !== null),
+                        Infolists\Components\TextEntry::make('updated_at')
+                            ->label('Diedit Pada')
+                            ->dateTime()
+                            ->visible(fn(Supplier $record) => $record->updatedBy !== null),
+                        Infolists\Components\TextEntry::make('deletedBy.name')
+                            ->label('Dihapus Oleh')
+                            ->visible(fn(Supplier $record) => $record->trashed())
+                            ->default('-'),
+                        Infolists\Components\TextEntry::make('deleted_at')
+                            ->label('Dihapus Pada')
+                            ->visible(fn(Supplier $record) => $record->trashed())
+                            ->dateTime(),
+                    ]),
             ]);
     }
 
@@ -116,8 +175,11 @@ class SupplierResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\DeleteAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
