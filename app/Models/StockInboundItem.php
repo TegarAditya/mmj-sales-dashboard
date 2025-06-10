@@ -52,6 +52,10 @@ class StockInboundItem extends Model
             $item->updateProductStock();
         });
 
+        static::updated(function ($item) {
+            $item->updateProductStock();
+        });
+
         static::deleted(function ($item) {
             $item->updateProductStock();
         });
