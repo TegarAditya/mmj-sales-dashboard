@@ -17,4 +17,14 @@ class Semester extends Model
         'start_date',
         'end_date',
     ];
+
+    public function deliveries()
+    {
+        return $this->hasMany(Delivery::class);
+    }
+
+    public function returnGoods()
+    {
+        return $this->hasMany(ReturnGood::class);
+    }
 }
