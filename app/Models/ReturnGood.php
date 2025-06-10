@@ -56,7 +56,7 @@ class ReturnGood extends Model
         $lastDelivery = self::orderBy('id', 'desc')->withTrashed()->first();
         $lastNumber = $lastDelivery ? (int) substr($lastDelivery->document_number, -4) : 0;
         $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        return 'RTR' . date('Ymd') . '-' . $newNumber;
+        return 'RTR-' . date('Ymd') . '-' . $newNumber;
     }
 
     protected static function booted(): void
@@ -65,20 +65,22 @@ class ReturnGood extends Model
             $model->document_number = $model->generateDocumentNumber();
         });
 
-        static::updating(function ($model) {
-            $model->document_number = $model->generateDocumentNumber();
-        });
-
         static::deleting(function ($model) {
-            $model->items()->delete();
-        });
-
-        static::forceDeleting(function ($model) {
-            $model->items()->forceDelete();
+            foreach ($model->items as $item) {
+                $item->delete();
+            }
         });
 
         static::restoring(function ($model) {
-            $model->items()->restore();
+            foreach ($model->items()->withTrashed()->get() as $item) {
+                $item->restore();
+            }
+        });
+
+        static::forceDeleting(function ($model) {
+            foreach ($model->items as $item) {
+                $item->forceDelete();
+            }
         });
     }
 }
