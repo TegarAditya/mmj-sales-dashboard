@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ReturnGoodItem extends Model
 {
     use SoftDeletes, HasUserAuditable;
-    
+
     protected $fillable = [
         'return_good_id',
         'product_id',
@@ -34,6 +34,15 @@ class ReturnGoodItem extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function updateProductStock(): void
+    {
+        $product = $this->product;
+        if ($product) {
+            $product->stock = $product->getStock();
+            $product->save();
+        }
+    }
+
     protected static function booted(): void
     {
         static::creating(function ($model) {
@@ -42,6 +51,22 @@ class ReturnGoodItem extends Model
 
         static::updating(function ($model) {
             $model->total = $model->quantity * $model->price;
+        });
+
+        static::saved(function ($item) {
+            $item->updateProductStock();
+        });
+
+        static::deleted(function ($item) {
+            $item->updateProductStock();
+        });
+
+        static::restored(function ($item) {
+            $item->updateProductStock();
+        });
+
+        static::forceDeleted(function ($item) {
+            $item->updateProductStock();
         });
     }
 }
