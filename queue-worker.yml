@@ -5,5 +5,6 @@ apps:
     interpreter: php
     instances: 1
     args:
-      - queue:listen
+      - queue:work
       - --tries=1
+      - --sleep=10
