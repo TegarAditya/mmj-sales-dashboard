@@ -44,7 +44,6 @@ RUN npm run build
 # Laravel setup
 RUN php artisan storage:link
 RUN php artisan optimize
-RUN php artisan filament:optimize
 
 # Expose FrankenPHP port
 EXPOSE 8000
