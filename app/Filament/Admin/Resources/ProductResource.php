@@ -83,6 +83,7 @@ class ProductResource extends Resource
                             ->minValue(0)
                             ->maxValue(9999999999)
                             ->default(0)
+                            ->visible(fn () => static::canViewCost())
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('price')
                             ->label('Harga Jual')
@@ -91,6 +92,7 @@ class ProductResource extends Resource
                             ->minValue(0)
                             ->maxValue(9999999999)
                             ->default(0)
+                            ->visible(fn () => static::canViewCost())
                             ->columnSpanFull(),
                     ])
 
