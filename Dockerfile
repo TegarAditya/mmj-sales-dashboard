@@ -22,8 +22,10 @@ RUN install-php-extensions \
     tokenizer \
     xml \
     zip \
-    @composer \
-    && apk add --no-cache nodejs npm
+    @composer
+    
+# Install Node.js and npm
+RUN apk add --no-cache nodejs npm
 
 # Install process manager
 RUN npm install -g pm2
