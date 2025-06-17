@@ -49,6 +49,8 @@ class StockInboundResource extends Resource
                     ])
                     ->columns(2),
                 Forms\Components\Section::make('Detail Stok Masuk')
+                    ->description('Daftar produk yang masuk ke dalam stok')
+                    ->hiddenOn('view')
                     ->schema([
                         Forms\Components\Repeater::make('items')
                             ->hiddenLabel()
