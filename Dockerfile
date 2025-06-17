@@ -45,6 +45,7 @@ RUN npm run build
 
 # Laravel setup
 RUN php artisan storage:link
+RUN php artisan optimize:clear
 RUN php artisan optimize
 
 # Expose FrankenPHP port
