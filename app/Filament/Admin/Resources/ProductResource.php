@@ -83,7 +83,7 @@ class ProductResource extends Resource
                             ->minValue(0)
                             ->maxValue(9999999999)
                             ->default(0)
-                            ->visible(fn () => static::canViewCost())
+                            ->visible(fn() => static::canViewCost())
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('price')
                             ->label('Harga Jual')
@@ -92,7 +92,7 @@ class ProductResource extends Resource
                             ->minValue(0)
                             ->maxValue(9999999999)
                             ->default(0)
-                            ->visible(fn () => static::canViewCost())
+                            ->visible(fn() => static::canViewCost())
                             ->columnSpanFull(),
                     ])
 
@@ -103,6 +103,9 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('No.')
+                    ->label('No.')
+                    ->rowIndex(),
                 Tables\Columns\TextColumn::make('code')
                     ->label('Kode Produk')
                     ->searchable(),
@@ -138,12 +141,12 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('cost')
                     ->label('Harga Pokok')
                     ->sortable()
-                    ->visible(fn () => static::canViewCost())
-                    ->formatStateUsing(fn ($state) => format_currency($state)),
+                    ->visible(fn() => static::canViewCost())
+                    ->formatStateUsing(fn($state) => format_currency($state)),
                 Tables\Columns\TextColumn::make('price')
                     ->label('Harga Jual')
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => format_currency($state)),
+                    ->formatStateUsing(fn($state) => format_currency($state)),
                 Tables\Columns\TextColumn::make('createdBy.name')
                     ->label('Dibuat Oleh')
                     ->badge()
@@ -173,14 +176,17 @@ class ProductResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                Tables\Actions\RestoreAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->disabled(fn($record) => $record->stockInboundItems()->count() > 0),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\RestoreBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
