@@ -168,8 +168,15 @@ class InvoiceResource extends Resource
                     ->placeholder('Pilih Customer'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('print')
+                    ->label('Print Invoice')
+                    ->icon('heroicon-o-printer')
+                    ->url(fn($record) => route('print.invoice', $record->id))
+                    ->openUrlInNewTab(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                ]),
                 Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
