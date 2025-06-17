@@ -169,5 +169,33 @@ class Product extends Model
             $model->code = $model->getCode();
             $model->name = $model->getName();
         });
+
+        static::deleting(function ($model) {
+            if ($model->stockInboundItems()->count() > 0) {
+                return false;
+            }
+
+            $model->stockInboundItems()->delete();
+            $model->estimationItems()->delete();
+            $model->deliveryItems()->delete();
+            $model->invoiceItems()->delete();
+            $model->returnGoodItems()->delete();
+        });
+
+        static::restoring(function ($model) {
+            $model->stockInboundItems()->withTrashed()->restore();
+            $model->estimationItems()->withTrashed()->restore();
+            $model->deliveryItems()->withTrashed()->restore();
+            $model->invoiceItems()->withTrashed()->restore();
+            $model->returnGoodItems()->withTrashed()->restore();
+        });
+
+        static::forceDeleting(function ($model) {
+            $model->stockInboundItems()->forceDelete();
+            $model->estimationItems()->forceDelete();
+            $model->deliveryItems()->forceDelete();
+            $model->invoiceItems()->forceDelete();
+            $model->returnGoodItems()->forceDelete();
+        });
     }
 }
