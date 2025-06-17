@@ -63,6 +63,7 @@
         <th width="1%" class="text-center">No.</th>
         <th>Jenjang</th>
         <th>Tema/Mapel</th>
+        <th>Penerbit</th>
         <th width="1%" class="text-center">Kls</th>
         <th width="1%" class="text-center">Hal</th>
         <th width="20%" class="text-center">Harga</th>
@@ -80,6 +81,7 @@
             <td class="text-center">{{ $loop->iteration }}</td>
             <td>{{ $product->educationalLevel->name }} - {{ $product->curriculum->code ?? null }}</td>
             <td>{{ $product->educationalSubject->name ?? null }}</td>
+            <td>{{ $product->publisher->code ?? null }}</td>
             <td class="text-center">{{ $product->educationalClass->code ?? null }}</td>
             <td class="text-center">{{ $product->page_count ?? null}}</td>
             <td class="text-right">{{ format_currency($item->price) }}</td>
@@ -92,18 +94,18 @@
 
     <tfoot>
         <tr>
-            <td colspan="9"><br></td>
+            <td colspan="10"><br></td>
         </tr>
         <tr>
-            <td colspan="7" class="text-right px-3"><strong>Subtotal</strong></td>
+            <td colspan="8" class="text-right px-3"><strong>Subtotal</strong></td>
             <td colspan="2" class="text-right px-3"><b>{{ format_currency($total_price) }}</b></td>
         </tr>
         <tr>
-            <td colspan="7" class="text-right px-3"><strong>Diskon</strong></td>
+            <td colspan="8" class="text-right px-3"><strong>Diskon</strong></td>
             <td colspan="2" class="text-right px-3"><b>{{ format_currency($total_discount) }}</b></td>
         </tr>
         <tr>
-            <td colspan="7" class="text-right px-3"><strong>Jumlah</strong></td>
+            <td colspan="8" class="text-right px-3"><strong>Jumlah</strong></td>
             <td colspan="2" class="text-right px-3"><b>{{ format_currency($total_due) }}</b></td>
         </tr>
     </tfoot>
