@@ -32,9 +32,11 @@ class DeliveryItemTable extends BaseWidget
                     ->label('No.')
                     ->rowIndex(),
                 Tables\Columns\TextColumn::make('product.code')
-                    ->label('Kode'),
+                    ->label('Kode')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('product.name')
-                    ->label('Nama Produk'),
+                    ->label('Nama Produk')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('quantity')
                     ->label('Jumlah')
                     ->weight(FontWeight::Bold)
