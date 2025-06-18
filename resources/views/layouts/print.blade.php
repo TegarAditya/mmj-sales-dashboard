@@ -21,7 +21,7 @@
                 <img src="{{ asset('images/prints/header-wide.webp') }}" class="print-logo" style="max-width: 100%" />
             </div>
         </div>
-        <hr class="my-2" />
+        <hr class="my-2" style="border-top: 1px solid #000;" />
         <div class="row mt-3">
             <div class="col-12">
                 @yield('header.center')

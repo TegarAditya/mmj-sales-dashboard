@@ -9,6 +9,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .app-print {
     border: 1px solid #000;
+    border-right-width: 2px;
     padding: .75cm;
 }
 
