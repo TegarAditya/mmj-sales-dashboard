@@ -7,6 +7,8 @@ use App\Filament\Admin\Resources\PaymentResource\RelationManagers;
 use App\Models\Payment;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,6 +24,8 @@ class PaymentResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
 
     protected static ?string $navigationGroup = 'Billing';
+
+    protected static ?string $recordTitleAttribute = 'document_number';
 
     public static function form(Form $form): Form
     {
@@ -63,20 +67,91 @@ class PaymentResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('paid')
                             ->label('Nominal Bayar')
+                            ->prefix('IDR')
                             ->required()
                             ->numeric()
+                            ->afterStateUpdated(function ($get, $set, $state) {
+                                $set('amount', $state + ($get('discount') * ($state / 100) ?? 0));
+                            })
+                            ->live()
+                            ->debounce(500)
                             ->default(0.00),
                         Forms\Components\TextInput::make('discount')
-                            ->label('Diskon')
+                            ->label('Diskon Pembayaran')
+                            ->prefix('%')
                             ->required()
                             ->numeric()
+                            ->debounce(500)
+                            ->afterStateUpdated(function ($get, $set, $state) {
+                                $set('amount', $get('paid') + ($get('paid') * ($state / 100)));
+                            })
+                            ->live()
                             ->default(0.00),
                         Forms\Components\TextInput::make('amount')
-                            ->label('Jumlah')
+                            ->label('Jumlah Masuk')
+                            ->prefix('IDR')
                             ->required()
                             ->numeric()
                             ->readOnly()
                             ->default(0.00),
+                    ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Infolists\Components\Section::make('Data Pembayaran')
+                    ->columns(2)
+                    ->icon('heroicon-o-currency-dollar')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('customer.name')
+                            ->label('Customer'),
+                        Infolists\Components\TextEntry::make('semester.name')
+                            ->label('Semester'),
+                        Infolists\Components\TextEntry::make('document_number')
+                            ->label('Nomor Dokumen'),
+                        Infolists\Components\TextEntry::make('payment_date')
+                            ->label('Tanggal Pembayaran')
+                            ->dateTime(),
+                        Infolists\Components\TextEntry::make('payment_method')
+                            ->label('Metode Pembayaran'),
+                        Infolists\Components\TextEntry::make('paid')
+                            ->label('Nominal Bayar')
+                            ->formatStateUsing(fn($state) => format_currency($state)),
+                        Infolists\Components\TextEntry::make('discount')
+                            ->label('Diskon Pembayaran')
+                            ->suffix('%'),
+                        Infolists\Components\TextEntry::make('amount')
+                            ->label('Jumlah Masuk')
+                            ->formatStateUsing(fn($state) => format_currency($state)),
+                    ]),
+                Infolists\Components\Section::make('Data Audit')
+                    ->columns(2)
+                    ->icon('heroicon-o-clock')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('createdBy.name')
+                            ->label('Dibuat Oleh'),
+                        Infolists\Components\TextEntry::make('created_at')
+                            ->label('Dibuat Pada')
+                            ->dateTime(),
+                        Infolists\Components\TextEntry::make('updatedBy.name')
+                            ->label('Diedit Oleh')
+                            ->default('-')
+                            ->visible(fn($record) => $record->updatedBy !== null),
+                        Infolists\Components\TextEntry::make('updated_at')
+                            ->label('Diedit Pada')
+                            ->dateTime()
+                            ->visible(fn($record) => $record->updatedBy !== null),
+                        Infolists\Components\TextEntry::make('deletedBy.name')
+                            ->label('Dihapus Oleh')
+                            ->visible(fn($record) => $record->trashed())
+                            ->default('-'),
+                        Infolists\Components\TextEntry::make('deleted_at')
+                            ->label('Dihapus Pada')
+                            ->visible(fn($record) => $record->trashed())
+                            ->dateTime(),
                     ]),
             ]);
     }
