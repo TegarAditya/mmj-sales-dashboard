@@ -114,7 +114,7 @@ class PaymentResource extends Resource
                             ->label('Nomor Dokumen'),
                         Infolists\Components\TextEntry::make('payment_date')
                             ->label('Tanggal Pembayaran')
-                            ->dateTime(),
+                            ->dateTime(format: 'D, d M Y'),
                         Infolists\Components\TextEntry::make('payment_method')
                             ->label('Metode Pembayaran'),
                         Infolists\Components\TextEntry::make('paid')
@@ -160,37 +160,52 @@ class PaymentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('customer_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('customer.name')
+                    ->label('Customer')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('semester_id')
+                Tables\Columns\TextColumn::make('semester.name')
+                    ->label('Semester')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('document_number')
+                    ->label('No. Kwitansi')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('payment_date')
-                    ->date()
+                    ->label('Tanggal Pembayaran')
+                    ->date(timezone: 'Asia/Jakarta', format: 'D, d M Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('payment_method')
+                    ->label('Metode Pembayaran')
+                    ->formatStateUsing(fn($state) => Payment::PAYMENT_METHODS[$state] ?? strtoupper($state))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('paid')
-                    ->numeric()
+                    ->label('Nominal Bayar')
+                    ->formatStateUsing(fn($state) => format_currency($state))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('discount')
+                    ->label('Bonus Pembayaran')
+                    ->suffix('%')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('amount')
-                    ->numeric()
+                    ->label('Jumlah Masuk')
+                    ->formatStateUsing(fn($state) => format_currency($state))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_by')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('updated_by')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('deleted_by')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('createdBy.name')
+                    ->label('Dibuat Oleh')
+                    ->badge()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updatedBy.name')
+                    ->label('Diedit Oleh')
+                    ->badge()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('deletedBy.name')
+                    ->label('Dihapus Oleh')
+                    ->default('-')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
