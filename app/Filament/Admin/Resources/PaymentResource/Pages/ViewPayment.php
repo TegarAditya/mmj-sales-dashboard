@@ -13,6 +13,11 @@ class ViewPayment extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('print')
+                ->label('Print Kwitansi')
+                ->icon('heroicon-o-printer')
+                ->url(route('print.payment', $this->record->id))
+                ->openUrlInNewTab(),
             Actions\EditAction::make(),
         ];
     }
