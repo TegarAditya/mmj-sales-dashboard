@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Delivery;
 use App\Models\Invoice;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -49,6 +50,22 @@ class PrintController extends Controller
             'total_due' => $total_due,
             'date' => $date,
             'semester' => $semester,
+        ]);
+    }
+
+    /**
+     * Display the payment print view for a specific payment.
+     *
+     * @param  int  $id  The ID of the payment to print.
+     */
+    public function paymentPrint($id): View
+    {
+        $payment = Payment::findOrFail($id);
+        $date = $payment->payment_date->setTimezone('Asia/Jakarta')->format('d/m/Y');
+
+        return view('prints.payment', [
+            'payment' => $payment,
+            'date' => $date,
         ]);
     }
 }
