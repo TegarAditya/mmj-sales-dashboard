@@ -8,7 +8,10 @@ use App\Models\Product;
 use App\Models\StockInbound;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -77,6 +80,59 @@ class StockInboundResource extends Resource
                     ])
                     ->columns(2)
                     ->columnSpanFull(),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Infolists\Components\Section::make('Informasi Stok Masuk')
+                    ->columns(2)
+                    ->icon('heroicon-o-archive-box-arrow-down')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('supplier.name')
+                            ->label('Supplier')
+                            ->inlineLabel()
+                            ->weight(FontWeight::Bold),
+                        Infolists\Components\TextEntry::make('date')
+                            ->label('Tanggal')
+                            ->inlineLabel()
+                            ->dateTime('D, d M Y H:i', 'Asia/Jakarta')
+                            ->weight(FontWeight::Bold),
+                    ]),
+                Infolists\Components\Section::make('Data Audit')
+                    ->columns(2)
+                    ->icon('heroicon-o-clock')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('createdBy.name')
+                            ->label('Dibuat Oleh')
+                            ->inlineLabel(),
+                        Infolists\Components\TextEntry::make('created_at')
+                            ->label('Dibuat Pada')
+                            ->inlineLabel()
+                            ->dateTime(),
+                        Infolists\Components\TextEntry::make('updatedBy.name')
+                            ->label('Diedit Oleh')
+                            ->inlineLabel()
+                            ->default('-')
+                            ->visible(fn($record) => $record->updatedBy !== null),
+                        Infolists\Components\TextEntry::make('updated_at')
+                            ->label('Diedit Pada')
+                            ->inlineLabel()
+                            ->dateTime()
+                            ->visible(fn($record) => $record->updatedBy !== null),
+                        Infolists\Components\TextEntry::make('deletedBy.name')
+                            ->label('Dihapus Oleh')
+                            ->inlineLabel()
+                            ->visible(fn($record) => $record->trashed())
+                            ->default('-'),
+                        Infolists\Components\TextEntry::make('deleted_at')
+                            ->label('Dihapus Pada')
+                            ->inlineLabel()
+                            ->visible(fn($record) => $record->trashed())
+                            ->dateTime(),
+                    ]),
             ]);
     }
 
