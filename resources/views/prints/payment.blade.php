@@ -40,7 +40,14 @@
                 <tr>
                     <td width="120">Dari Tagihan Sejumlah </td>
                     <td width="8">:</td>
-                    <td class="px-0">{{ format_currency($payment->amount) }} <em>(Diskon {{ $payment->discount }}%)</em></td>
+                    <td class="px-0">
+                        @if ($payment->discount > 0)
+                        <em><del>{{ format_currency($payment->amount) }}</del></em>
+                        {{ format_currency($payment->paid) }}
+                        @else
+                        {{ format_currency($payment->amount) }}
+                        @endif
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -54,9 +61,9 @@
         </div>
 
         @if ($payment->note)
-            <p class="mt-2 mb-0 small">
-                <em>Catatan: {{ $payment->note }}</em>
-            </p>
+        <p class="mt-2 mb-0 small">
+            <em>Catatan: {{ $payment->note }}</em>
+        </p>
         @endif
     </div>
 </div>
@@ -77,8 +84,8 @@
 
 @push('styles')
 <style type="text/css" media="print">
-@page {
-    size: landscape;
-}
+    @page {
+        size: landscape;
+    }
 </style>
 @endpush
