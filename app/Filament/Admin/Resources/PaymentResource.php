@@ -116,13 +116,14 @@ class PaymentResource extends Resource
                             ->label('Tanggal Pembayaran')
                             ->dateTime(format: 'D, d M Y'),
                         Infolists\Components\TextEntry::make('payment_method')
-                            ->label('Metode Pembayaran'),
+                            ->label('Metode Pembayaran')
+                            ->formatStateUsing(fn($state) => Payment::PAYMENT_METHODS[$state] ?? strtoupper($state)),
                         Infolists\Components\TextEntry::make('paid')
                             ->label('Nominal Bayar')
                             ->formatStateUsing(fn($state) => format_currency($state)),
                         Infolists\Components\TextEntry::make('discount')
-                            ->label('Diskon Pembayaran')
-                            ->suffix('%'),
+                            ->label('Bonus Pembayaran')
+                            ->formatStateUsing(fn($state, $record) => $state . '%' . ' (' . format_currency($record->paid * $state / 100) . ')'),
                         Infolists\Components\TextEntry::make('amount')
                             ->label('Jumlah Masuk')
                             ->formatStateUsing(fn($state) => format_currency($state)),
