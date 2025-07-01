@@ -43,6 +43,16 @@ class ReturnGoodItem extends Model
         }
     }
 
+    public function updateReturnGoodTotals(): void
+    {
+        $returnGood = $this->returnGood;
+        if ($returnGood) {
+            $returnGood->total_quantity = $returnGood->items->sum('quantity');
+            $returnGood->total_price = $returnGood->items->sum('total');
+            $returnGood->save();
+        }
+    }
+
     protected static function booted(): void
     {
         static::creating(function ($model) {
@@ -55,18 +65,22 @@ class ReturnGoodItem extends Model
 
         static::saved(function ($item) {
             $item->updateProductStock();
+            $item->updateReturnGoodTotals();
         });
 
         static::deleted(function ($item) {
             $item->updateProductStock();
+            $item->updateReturnGoodTotals();
         });
 
         static::restored(function ($item) {
             $item->updateProductStock();
+            $item->updateReturnGoodTotals();
         });
 
         static::forceDeleted(function ($item) {
             $item->updateProductStock();
+            $item->updateReturnGoodTotals();
         });
     }
 }
