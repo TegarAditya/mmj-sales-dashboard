@@ -9,7 +9,7 @@ use Filament\Forms\Form;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
 use Filament\Pages\Page;
 
-class EstimationBalance extends Page
+class EstimationBalancePage extends Page
 {
     use HasFiltersForm;
 
