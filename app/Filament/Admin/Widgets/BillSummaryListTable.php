@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
-use App\Models\Invoice;
+use App\Models\Customer;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
@@ -37,60 +37,63 @@ class BillSummaryListTable extends BaseWidget
                     ->sortable('customers.name')
                     ->searchable('customers.name'),
                 Tables\Columns\TextColumn::make('total_due')
-                    ->label('Total Tagihan')
+                    ->label('Invoice')
                     ->sortable()
                     ->numeric()
                     ->default(0)
-                    ->weight('bold')
-                    ->alignCenter(),
+                    ->weight('bold'),
                 Tables\Columns\TextColumn::make('total_discount')
-                    ->label('Total Diskon')
+                    ->label('Diskon')
                     ->sortable()
                     ->numeric()
                     ->default(0)
-                    ->weight('bold')
-                    ->alignCenter(),
+                    ->weight('bold'),
                 Tables\Columns\TextColumn::make('total_discounted_due')
-                    ->label('Total Tagihan Diskon')
+                    ->label('Tagihan Diskon')
                     ->sortable()
                     ->numeric()
                     ->default(0)
-                    ->weight('bold')
-                    ->alignCenter(),
+                    ->weight('bold'),
                 Tables\Columns\TextColumn::make('return_amount')
-                    ->label('Total Retur')
+                    ->label('Retur')
                     ->sortable()
                     ->numeric()
                     ->default(0)
-                    ->weight('bold')
-                    ->alignCenter(),
+                    ->weight('bold'),
                 Tables\Columns\TextColumn::make('bills')
-                    ->label('Total Tagihan Setelah Retur')
+                    ->label('Tagihan')
                     ->sortable()
                     ->numeric()
                     ->default(0)
-                    ->weight('bold')
-                    ->alignCenter(),
+                    ->weight('bold'),
                 Tables\Columns\TextColumn::make('total_payments')
-                    ->label('Total Pembayaran')
+                    ->label('Pembayaran')
                     ->sortable()
                     ->numeric()
                     ->default(0)
-                    ->weight('bold')
-                    ->alignCenter(),
+                    ->weight('bold'),
                 Tables\Columns\TextColumn::make('remaining_bills')
                     ->label('Sisa Tagihan')
                     ->sortable()
                     ->numeric()
                     ->default(0)
-                    ->weight('bold')
-                    ->alignCenter(),
+                    ->weight('bold'),
             ]);
     }
 
     public function getListBillSummary()
     {
-        $subqueryRetur = DB::table('return_goods')
+        $subqueryInvoices = DB::table('invoices')
+            ->select(
+                'customer_id',
+                'semester_id',
+                DB::raw('SUM(total_due) AS total_due'),
+                DB::raw('SUM(total_discount) AS total_discount')
+            )
+            ->whereNull('deleted_at')
+            ->groupBy('customer_id', 'semester_id');
+
+        $subqueryReturns = DB::table('return_goods')
             ->select(
                 'customer_id',
                 'semester_id',
@@ -106,38 +109,35 @@ class BillSummaryListTable extends BaseWidget
             )
             ->groupBy('customer_id', 'semester_id');
 
-        return Invoice::query()
-            ->leftJoinSub($subqueryRetur, 'return_goods_subquery', function ($join) {
-                $join->on('invoices.customer_id', '=', 'return_goods_subquery.customer_id')
-                    ->on('invoices.semester_id', '=', 'return_goods_subquery.semester_id');
+        return Customer::query()
+            ->crossJoin('semesters')
+            ->where('semesters.id', '=', $this->filters['semester_id'])
+            ->leftJoinSub($subqueryInvoices, 'inv', function ($join) {
+                $join->on('customers.id', '=', 'inv.customer_id')
+                    ->on('semesters.id', '=', 'inv.semester_id');
             })
-            ->leftJoinSub($subqueryPayments, 'payments_subquery', function ($join) {
-                $join->on('invoices.customer_id', '=', 'payments_subquery.customer_id')
-                    ->on('invoices.semester_id', '=', 'payments_subquery.semester_id');
+            ->leftJoinSub($subqueryReturns, 'ret', function ($join) {
+                $join->on('customers.id', '=', 'ret.customer_id')
+                    ->on('semesters.id', '=', 'ret.semester_id');
             })
-            ->leftJoin('customers', 'invoices.customer_id', '=', 'customers.id')
-            ->leftJoin('semesters', 'invoices.semester_id', '=', 'semesters.id')
+            ->leftJoinSub($subqueryPayments, 'pay', function ($join) {
+                $join->on('customers.id', '=', 'pay.customer_id')
+                    ->on('semesters.id', '=', 'pay.semester_id');
+            })
             ->select([
-                'invoices.customer_id',
-                'invoices.semester_id',
+                'customers.id as customer_id',
                 'customers.name as customer_name',
+                'semesters.id as semester_id',
                 'semesters.name as semester_name',
-                DB::raw('COALESCE(SUM(invoices.total_due), 0) AS total_due'),
-                DB::raw('COALESCE(SUM(invoices.total_discount), 0) AS total_discount'),
-                DB::raw('COALESCE(SUM(invoices.total_due), 0) - COALESCE(SUM(invoices.total_discount), 0) AS total_discounted_due'),
-                DB::raw('COALESCE(return_goods_subquery.total_return_goods_amount, 0) AS return_amount'),
-                DB::raw('COALESCE(SUM(invoices.total_due), 0) - COALESCE(SUM(invoices.total_discount), 0) - COALESCE(return_goods_subquery.total_return_goods_amount, 0) AS bills'),
-                DB::raw('COALESCE(payments_subquery.total_payments, 0) AS total_payments'),
-                DB::raw('COALESCE(SUM(invoices.total_due), 0) - COALESCE(SUM(invoices.total_discount), 0) - COALESCE(return_goods_subquery.total_return_goods_amount, 0) - COALESCE(payments_subquery.total_payments, 0) AS remaining_bills'),
+                DB::raw('COALESCE(inv.total_due, 0) AS total_due'),
+                DB::raw('COALESCE(inv.total_discount, 0) AS total_discount'),
+                DB::raw('COALESCE(inv.total_due, 0) - COALESCE(inv.total_discount, 0) AS total_discounted_due'),
+                DB::raw('COALESCE(ret.total_return_goods_amount, 0) AS return_amount'),
+                DB::raw('COALESCE(inv.total_due, 0) - COALESCE(inv.total_discount, 0) - COALESCE(ret.total_return_goods_amount, 0) AS bills'),
+                DB::raw('COALESCE(pay.total_payments, 0) AS total_payments'),
+                DB::raw('COALESCE(inv.total_due, 0) - COALESCE(inv.total_discount, 0) - COALESCE(ret.total_return_goods_amount, 0) - COALESCE(pay.total_payments, 0) AS remaining_bills'),
             ])
-            ->where('invoices.semester_id', '<=', $this->filters['semester_id'])
-            ->groupBy(
-                'invoices.customer_id',
-                'invoices.semester_id',
-                'customers.name',
-                'semesters.name',
-                'return_goods_subquery.total_return_goods_amount',
-                'payments_subquery.total_payments'
-            );
+            ->orderBy('customers.name')
+            ->orderBy('semesters.id');
     }
 }
